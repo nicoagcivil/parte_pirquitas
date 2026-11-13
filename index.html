@@ -1,0 +1,920 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Planilla Diaria de Obra - Control de Equipos BSD</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#fdf2f2',
+                            100: '#fde4e4',
+                            500: '#b41f25',
+                            600: '#9b1a1f',
+                            700: '#7e1318',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Google Fonts Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .fade-in {
+            animation: fadeIn 0.25s ease-in-out;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(4px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body class="bg-slate-900 text-slate-100 min-h-screen flex flex-col selection:bg-[#b41f25] selection:text-white">
+
+    <!-- Header / Encabezado con Logos Izquierda (logobsd.png) y Derecha (logocliente.jpg) -->
+    <header class="bg-slate-800/95 backdrop-blur-md border-b border-slate-700 shadow-lg py-3.5 px-4 sm:px-6 sticky top-0 z-50">
+        <div class="max-w-5xl mx-auto flex flex-col gap-3">
+            
+            <!-- Fila Superior: Logo BSD (Izquierda) - Título (Centro) - Logo Cliente (Derecha) -->
+            <div class="flex items-center justify-between gap-4">
+                <!-- Logo BSD (Izquierda) -->
+                <div class="bg-white px-3 py-1.5 rounded-xl shadow-md shrink-0 flex items-center justify-center border border-slate-200 h-12 sm:h-14 min-w-[96px]">
+                    <img src="logobsd.png" alt="Logo BSD" class="max-h-9 sm:max-h-11 w-auto object-contain" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                    <div class="hidden items-center gap-1.5">
+                        <span class="w-2.5 h-2.5 rounded-full bg-[#b41f25]"></span>
+                        <span class="text-sm font-extrabold text-[#b41f25] tracking-wider">BSD</span>
+                    </div>
+                </div>
+
+                <!-- Título Central -->
+                <div class="text-center flex-grow">
+                    <h1 class="text-lg sm:text-2xl font-bold tracking-tight text-white">
+                        Planilla Diaria de Obra
+                    </h1>
+                    <p class="text-xs text-slate-400 hidden sm:block">Control de Equipos, Combustible y Actividades</p>
+                </div>
+
+                <!-- Logo Cliente (Derecha) -->
+                <div class="bg-white px-3 py-1.5 rounded-xl shadow-md shrink-0 flex items-center justify-center border border-slate-200 h-12 sm:h-14 min-w-[96px]">
+                    <img src="logocliente.jpg" alt="Logo Cliente" class="max-h-9 sm:max-h-11 w-auto object-contain" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                    <div class="hidden items-center gap-1.5">
+                        <span class="text-xs font-extrabold text-slate-700 tracking-wider">CLIENTE</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Fila Inferior: Fecha y Selector de Turno -->
+            <div class="flex flex-wrap items-center justify-between gap-3 pt-2 border-t border-slate-700/60">
+                <div id="date-display" class="bg-slate-700/60 px-3.5 py-1.5 rounded-xl text-xs text-slate-200 font-medium border border-slate-600 capitalize"></div>
+
+                <div class="bg-slate-900 border border-slate-700 rounded-xl p-1 flex items-center shadow-inner ml-auto">
+                    <button type="button" id="turno-dia" class="px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-all bg-[#b41f25] text-white shadow">
+                        ☀️ Turno Día
+                    </button>
+                    <button type="button" id="turno-noche" class="px-3.5 py-1.5 rounded-lg text-xs font-semibold text-slate-400 hover:text-slate-200 transition-all">
+                        🌙 Turno Noche
+                    </button>
+                </div>
+            </div>
+
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <main class="flex-grow max-w-5xl w-full mx-auto p-4 sm:p-6 md:p-8">
+        
+        <form id="obra-form" class="space-y-6">
+            
+            <!-- PUNTO 1: Identificación y Selección Jerárquica de Equipo -->
+            <div class="bg-slate-800 border border-slate-700 rounded-2xl p-5 sm:p-6 shadow-xl relative overflow-hidden">
+                <div class="absolute top-0 left-0 w-1.5 h-full bg-[#b41f25]"></div>
+                <h2 class="text-lg font-semibold text-[#b41f25] flex items-center gap-2 mb-4">
+                    <span class="bg-[#b41f25]/10 text-[#b41f25] w-7 h-7 rounded-lg flex items-center justify-center text-sm font-bold border border-[#b41f25]/20">1</span>
+                    Identificación del Chofer / Operador y Equipo
+                </h2>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+                    <div class="md:col-span-3">
+                        <label class="block text-sm font-medium text-slate-300 mb-1.5">Nombre y Apellido del Chofer / Operador</label>
+                        <input type="text" id="operador-input" placeholder="Ej: Juan Pérez" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-3 text-slate-100 focus:outline-none focus:ring-2 focus:ring-[#b41f25] focus:border-transparent transition-all" required>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-slate-300 mb-1.5">1. Categoría</label>
+                        <select id="categoria-select" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-3 text-slate-100 focus:outline-none focus:ring-2 focus:ring-[#b41f25] focus:border-transparent transition-all" required>
+                            <option value="">Seleccione categoría...</option>
+                            <option value="Livianos">Vehículos Livianos (Camionetas)</option>
+                            <option value="Maquinaria">Maquinaria Vial (Cargadora / Retropala)</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-slate-300 mb-1.5">2. Tipo de Equipo</label>
+                        <select id="subcategoria-select" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-3 text-slate-100 focus:outline-none focus:ring-2 focus:ring-[#b41f25] focus:border-transparent transition-all disabled:opacity-40 disabled:cursor-not-allowed" disabled required>
+                            <option value="">Primero seleccione categoría...</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-slate-300 mb-1.5">3. Equipo Específico (Dominio / Modelo)</label>
+                        <select id="equipo-select" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-3 text-slate-100 focus:outline-none focus:ring-2 focus:ring-[#b41f25] focus:border-transparent transition-all disabled:opacity-40 disabled:cursor-not-allowed" disabled required>
+                            <option value="">Primero seleccione tipo...</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <!-- PUNTO 2: Detalles según Equipo -->
+            <div id="sec2-container" class="bg-slate-800 border border-slate-700 rounded-2xl p-5 sm:p-6 shadow-xl relative overflow-hidden transition-all">
+                <div class="absolute top-0 left-0 w-1.5 h-full bg-[#b41f25]"></div>
+                <h2 class="text-lg font-semibold text-[#b41f25] flex items-center gap-2 mb-4">
+                    <span class="bg-[#b41f25]/10 text-[#b41f25] w-7 h-7 rounded-lg flex items-center justify-center text-sm font-bold border border-[#b41f25]/20">2</span>
+                    <span id="sec2-titulo">Actividad y Detalle de Jornada</span>
+                </h2>
+
+                <div id="sec2-content" class="space-y-4">
+                    <!-- Mensaje Inicial -->
+                    <div id="panel-inicial" class="bg-slate-900/40 p-6 rounded-xl border border-slate-700/60 text-center text-slate-400 text-sm">
+                        ⚠️ Seleccione un equipo en el Punto 1 para desplegar los campos correspondientes a su reporte.
+                    </div>
+
+                    <!-- Panel Camionetas -->
+                    <div id="panel-camioneta" class="sec-panel hidden space-y-5 fade-in">
+                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                            <div>
+                                <label class="block text-sm font-medium text-slate-300 mb-1.5">Km Inicial</label>
+                                <div class="relative">
+                                    <input type="number" id="camioneta-km-inicial" min="0" step="0.1" placeholder="Ej: 45200" class="w-full bg-slate-900 border border-slate-700 rounded-xl pl-4 pr-12 py-3 text-slate-100 focus:outline-none focus:ring-2 focus:ring-[#b41f25]">
+                                    <span class="absolute right-4 top-3.5 text-xs text-slate-500 font-bold">Km</span>
+                                </div>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-slate-300 mb-1.5">Km Final</label>
+                                <div class="relative">
+                                    <input type="number" id="camioneta-km-final" min="0" step="0.1" placeholder="Ej: 45320" class="w-full bg-slate-900 border border-slate-700 rounded-xl pl-4 pr-12 py-3 text-slate-100 focus:outline-none focus:ring-2 focus:ring-[#b41f25]">
+                                    <span class="absolute right-4 top-3.5 text-xs text-slate-500 font-bold">Km</span>
+                                </div>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-slate-300 mb-1.5">Km Recorridos (Auto)</label>
+                                <div class="relative">
+                                    <input type="text" id="camioneta-km" readonly value="0" class="w-full bg-slate-950/70 border border-slate-700 rounded-xl pl-4 pr-12 py-3 text-emerald-400 font-bold cursor-not-allowed">
+                                    <span class="absolute right-4 top-3.5 text-xs text-emerald-500/80 font-bold">Km</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-medium text-slate-300 mb-1.5">Actividad / Comentarios de la Jornada</label>
+                            <input type="text" id="camioneta-comentarios" placeholder="Ej: Transporte de personal, sereno nocturno, recorrida de obra, etc." class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-3 text-slate-100 focus:outline-none focus:ring-2 focus:ring-[#b41f25]">
+                        </div>
+
+                        <!-- Sección Exclusiva Camioneta AG022VW: Reparto de Combustible a Equipos -->
+                        <div id="panel-reparto-combustible" class="hidden pt-4 border-t border-slate-700/70 space-y-3 fade-in">
+                            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                                <div>
+                                    <h3 class="text-sm font-bold text-red-400 uppercase tracking-wider flex items-center gap-2">
+                                        🛢️ Reparto de Combustible a Equipos (Camioneta AG022VW)
+                                    </h3>
+                                    <p class="text-xs text-slate-400">Registre las entregas de gasoil realizadas desde esta unidad hacia otros equipos en obra.</p>
+                                </div>
+                                <button type="button" id="btn-add-reparto" class="bg-[#b41f25]/20 hover:bg-[#b41f25]/30 text-red-300 border border-[#b41f25]/30 px-3.5 py-2 rounded-xl text-xs font-semibold transition-all self-start sm:self-auto shrink-0">
+                                    + Agregar entrega
+                                </button>
+                            </div>
+                            <div id="repartos-lista" class="space-y-3"></div>
+                        </div>
+                    </div>
+
+                    <!-- Panel Maquinaria (Cargadora Develon SD 300 / Retropala John Deere 310L) -->
+                    <div id="panel-maquinaria" class="sec-panel hidden space-y-4 fade-in">
+                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                            <div>
+                                <label class="block text-sm font-medium text-slate-300 mb-1.5">Horómetro Inicial</label>
+                                <div class="relative">
+                                    <input type="number" id="maquinaria-horo-inicial" min="0" step="0.1" placeholder="Ej: 1250.5" class="w-full bg-slate-900 border border-slate-700 rounded-xl pl-4 pr-12 py-3 text-slate-100 focus:outline-none focus:ring-2 focus:ring-[#b41f25]">
+                                    <span class="absolute right-4 top-3.5 text-xs text-slate-500 font-bold">Hs</span>
+                                </div>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-slate-300 mb-1.5">Horómetro Final</label>
+                                <div class="relative">
+                                    <input type="number" id="maquinaria-horo-final" min="0" step="0.1" placeholder="Ej: 1258.5" class="w-full bg-slate-900 border border-slate-700 rounded-xl pl-4 pr-12 py-3 text-slate-100 focus:outline-none focus:ring-2 focus:ring-[#b41f25]">
+                                    <span class="absolute right-4 top-3.5 text-xs text-slate-500 font-bold">Hs</span>
+                                </div>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-slate-300 mb-1.5">Horas Trabajadas (Auto)</label>
+                                <div class="relative">
+                                    <input type="text" id="maquinaria-horas-trabajadas" readonly value="0.0" class="w-full bg-slate-950/70 border border-slate-700 rounded-xl pl-4 pr-12 py-3 text-emerald-400 font-bold cursor-not-allowed">
+                                    <span class="absolute right-4 top-3.5 text-xs text-emerald-500/80 font-bold">Hs</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-medium text-slate-300 mb-1.5">Sector de Trabajo</label>
+                            <input type="text" id="maquinaria-sector" placeholder="Ej: Obrador, Acceso Principal, Zona Norte, Acopio..." class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-3 text-slate-100 focus:outline-none focus:ring-2 focus:ring-[#b41f25]">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-slate-300 mb-1.5">Detalle del Trabajo Realizado</label>
+                            <textarea id="maquinaria-detalle" rows="3" placeholder="Describa las tareas ejecutadas durante el turno (ej: carga de material, nivelación, zanjeo, limpieza de sector...)" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-3 text-slate-100 focus:outline-none focus:ring-2 focus:ring-[#b41f25]"></textarea>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- PUNTO 3: Carga de Gasoil -->
+            <div class="bg-slate-800 border border-slate-700 rounded-2xl p-5 sm:p-6 shadow-xl relative overflow-hidden">
+                <div class="absolute top-0 left-0 w-1.5 h-full bg-[#b41f25]"></div>
+                <h2 class="text-lg font-semibold text-[#b41f25] flex items-center gap-2 mb-4">
+                    <span class="bg-[#b41f25]/10 text-[#b41f25] w-7 h-7 rounded-lg flex items-center justify-center text-sm font-bold border border-[#b41f25]/20">3</span>
+                    <span id="lbl-punto3-titulo">Carga de Gasoil</span>
+                </h2>
+
+                <!-- Bloque exclusivo para Camioneta AG022VW (Carga ingresada al tanque/cisterna de abastecimiento) -->
+                <div id="container-cisterna-carga" class="hidden mb-4 p-4 bg-slate-900/70 rounded-xl border border-red-500/30 fade-in">
+                    <label class="block text-sm font-semibold text-red-400 mb-1.5">🛢️ Carga de Combustible INGRESADA al Tanque de Abastecimiento (AG022VW)</label>
+                    <div class="relative">
+                        <input type="number" id="cisterna-litros" min="0" step="0.1" placeholder="Ej: 1000 (Litros reabastecidos para repartir en obra)" class="w-full bg-slate-900 border border-red-500/40 rounded-xl pl-4 pr-20 py-3 text-white font-bold focus:outline-none focus:ring-2 focus:ring-[#b41f25]">
+                        <span class="absolute right-4 top-3.5 text-xs text-red-400 font-bold">Lts Tanque</span>
+                    </div>
+                    <p class="text-xs text-slate-400 mt-1.5">Ingrese aquí el volumen total de gasoil cargado en el tanque/cisterna auxiliar de la camioneta para abastecer a otros equipos.</p>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 items-center">
+                    <div>
+                        <label id="lbl-gasoil-input" class="block text-sm font-medium text-slate-300 mb-1.5">Litros de Gasoil Cargados hoy (Consumo Propio)</label>
+                        <div class="relative">
+                            <input type="number" id="gasoil-litros" min="0" step="0.1" placeholder="Ej: 85 (Dejar en 0 si no cargó)" class="w-full bg-slate-900 border border-slate-700 rounded-xl pl-4 pr-16 py-3 text-slate-100 focus:outline-none focus:ring-2 focus:ring-[#b41f25]">
+                            <span class="absolute right-4 top-3.5 text-xs text-slate-500 font-bold">Lts Motor</span>
+                        </div>
+                    </div>
+                    <div id="lbl-gasoil-desc" class="text-xs text-slate-400 bg-slate-900/50 p-3.5 rounded-xl border border-slate-700/50">
+                        ⛽ Registre la cantidad total de litros de combustible cargados al tanque propio del equipo durante el turno.
+                    </div>
+                </div>
+            </div>
+
+            <!-- PUNTO 4: Paradas y Novedades -->
+            <div class="bg-slate-800 border border-slate-700 rounded-2xl p-5 sm:p-6 shadow-xl relative overflow-hidden">
+                <div class="absolute top-0 left-0 w-1.5 h-full bg-[#b41f25]"></div>
+                <h2 class="text-lg font-semibold text-[#b41f25] flex items-center gap-2 mb-4">
+                    <span class="bg-[#b41f25]/10 text-[#b41f25] w-7 h-7 rounded-lg flex items-center justify-center text-sm font-bold border border-[#b41f25]/20">4</span>
+                    Paradas y Novedades
+                </h2>
+
+                <div class="space-y-4">
+                    <div class="flex items-center space-x-3 bg-slate-900 p-3.5 rounded-xl border border-slate-700">
+                        <input type="checkbox" id="chk-detencion" class="w-5 h-5 text-[#b41f25] rounded bg-slate-950 border-slate-700 focus:ring-[#b41f25] accent-[#b41f25] cursor-pointer">
+                        <label for="chk-detencion" class="text-sm font-medium text-slate-200 cursor-pointer">
+                            ¿El equipo tuvo paradas, detenciones o novedades hoy?
+                        </label>
+                    </div>
+
+                    <div id="panel-detencion" class="hidden bg-slate-900/60 p-4 rounded-xl border border-slate-700/60 space-y-4 fade-in">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-sm font-medium text-slate-300 mb-1.5">Motivo / Tipo de Parada</label>
+                                <select id="detencion-tipo" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-2.5 text-slate-100 focus:outline-none focus:ring-2 focus:ring-[#b41f25]">
+                                    <option value="Desperfecto Mecánico">Desperfecto Mecánico / Avería</option>
+                                    <option value="Stand by Climático">Stand by Climático</option>
+                                    <option value="Service / Mantenimiento">Service / Mantenimiento</option>
+                                    <option value="Espera / Operativo">Espera / Motivo Operativo</option>
+                                    <option value="Otro">Otro (Especificar...)</option>
+                                </select>
+                            </div>
+
+                            <div id="container-detencion-otro" class="hidden">
+                                <label class="block text-sm font-medium text-slate-300 mb-1.5">Especifique el Motivo ("Otro")</label>
+                                <input type="text" id="detencion-otro-texto" placeholder="Ej: Falta de repuesto / Trámite..." class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-2.5 text-slate-100 focus:outline-none focus:ring-2 focus:ring-[#b41f25]">
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-medium text-slate-300 mb-1.5">Detalle de la Parada / Observaciones</label>
+                            <textarea id="detencion-observacion" rows="3" placeholder="Detalle horario de parada, motivo, estado del equipo o comentarios adicionales..." class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-2.5 text-slate-100 focus:outline-none focus:ring-2 focus:ring-[#b41f25]"></textarea>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Botones -->
+            <div class="flex flex-col sm:flex-row gap-4 justify-end pt-2">
+                <button type="button" id="btn-limpiar" class="px-6 py-3 rounded-xl border border-slate-700 bg-slate-800 hover:bg-slate-700 text-slate-300 font-medium transition-all">
+                    Limpiar Formulario
+                </button>
+                <button type="submit" id="btn-submit" class="px-8 py-3 rounded-xl bg-[#b41f25] hover:bg-[#9b1a1f] text-white font-bold shadow-lg shadow-[#b41f25]/20 transition-all flex items-center justify-center gap-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    <span>Enviar a Planilla y Generar Reporte</span>
+                </button>
+            </div>
+
+        </form>
+
+        <!-- OUTPUT REPORTE -->
+        <div id="resultado-container" class="hidden mt-8 bg-slate-800 border border-slate-700 rounded-2xl p-5 sm:p-6 shadow-2xl space-y-4 fade-in">
+            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
+                <h3 class="text-lg font-bold text-red-400 flex items-center gap-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3" />
+                    </svg>
+                    Reporte Diario Generado
+                </h3>
+                <div class="flex gap-2 w-full sm:w-auto">
+                    <button id="btn-csv" class="flex-1 sm:flex-none bg-emerald-600 hover:bg-emerald-500 text-white font-semibold px-4 py-2 rounded-xl text-sm transition-all flex items-center justify-center gap-1.5 shadow">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
+                        Descargar CSV
+                    </button>
+                    <button id="btn-copiar" class="flex-1 sm:flex-none bg-[#b41f25] hover:bg-[#9b1a1f] text-white font-semibold px-4 py-2 rounded-xl text-sm transition-all flex items-center justify-center gap-1.5 shadow">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3" />
+                        </svg>
+                        Copiar Reporte
+                    </button>
+                </div>
+            </div>
+            <div id="reporte-texto" class="bg-slate-900 border border-slate-700 p-4 rounded-xl text-sm font-mono text-slate-300 whitespace-pre-wrap leading-relaxed select-all"></div>
+        </div>
+
+    </main>
+
+    <footer class="text-center py-6 text-xs text-slate-500 border-t border-slate-800 mt-12">
+        Sistema de Control de Obra • BSD
+    </footer>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="fixed bottom-5 right-5 bg-[#b41f25] text-white px-4 py-3 rounded-xl font-bold shadow-2xl transition-all transform translate-y-20 opacity-0 z-50 flex items-center gap-2">
+        <span id="toast-msg">Notificación</span>
+    </div>
+
+    <!-- JavaScript Logic -->
+    <script>
+        const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwCoT8_fsdnVE21qC3ESSu3ToNd9yzy-I6ZSLjmmYqljUrZdZeeNzF0eHKfQNRrU7Zu/exec';
+
+        // Estructura Jerárquica Definitiva de Equipos
+        const equiposEstructura = {
+            "Livianos": {
+                "Camioneta": [
+                    { id: "AG022VW", label: "Camioneta AG022VW (Abastecimiento / Combustible)", esAbastecimiento: true },
+                    { id: "AE784XP", label: "Camioneta AE784XP", esAbastecimiento: false }
+                ]
+            },
+            "Maquinaria": {
+                "Pala Cargadora": [
+                    { id: "Develon SD 300", label: "Cargadora Develon SD 300", esAbastecimiento: false }
+                ],
+                "Retropala": [
+                    { id: "John Deere 310L", label: "Retropala John Deere 310L", esAbastecimiento: false }
+                ]
+            }
+        };
+
+        // Lista plana de todos los equipos para el selector de entrega de combustible
+        const listaEquiposReceptores = [
+            "Cargadora Develon SD 300",
+            "Retropala John Deere 310L",
+            "Camioneta AG022VW",
+            "Camioneta AE784XP",
+            "Otro equipo / Auxiliar"
+        ];
+
+        // DOM Elements
+        const operadorInput = document.getElementById('operador-input');
+        const categoriaSelect = document.getElementById('categoria-select');
+        const subcategoriaSelect = document.getElementById('subcategoria-select');
+        const equipoSelect = document.getElementById('equipo-select');
+        const sec2Titulo = document.getElementById('sec2-titulo');
+        const form = document.getElementById('obra-form');
+        const resultadoContainer = document.getElementById('resultado-container');
+        const reporteTexto = document.getElementById('reporte-texto');
+        const btnSubmit = document.getElementById('btn-submit');
+        const chkDetencion = document.getElementById('chk-detencion');
+        const panelDetencion = document.getElementById('panel-detencion');
+        const detencionTipo = document.getElementById('detencion-tipo');
+        const containerOtro = document.getElementById('container-detencion-otro');
+
+        // Mostrar Fecha Actual
+        document.getElementById('date-display').innerText = new Date().toLocaleDateString('es-AR', { 
+            weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' 
+        });
+
+        // Selector de Turno
+        let turnoSeleccionado = "Turno Día";
+        const btnDia = document.getElementById('turno-dia');
+        const btnNoche = document.getElementById('turno-noche');
+
+        btnDia.addEventListener('click', () => {
+            turnoSeleccionado = "Turno Día";
+            btnDia.className = "px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-all bg-[#b41f25] text-white shadow";
+            btnNoche.className = "px-3.5 py-1.5 rounded-lg text-xs font-semibold text-slate-400 hover:text-slate-200 transition-all";
+        });
+
+        btnNoche.addEventListener('click', () => {
+            turnoSeleccionado = "Turno Noche";
+            btnNoche.className = "px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-all bg-[#b41f25] text-white shadow";
+            btnDia.className = "px-3.5 py-1.5 rounded-lg text-xs font-semibold text-slate-400 hover:text-slate-200 transition-all";
+        });
+
+        // 1. Selección Categoría -> Carga Subcategorías
+        categoriaSelect.addEventListener('change', function() {
+            const cat = this.value;
+            subcategoriaSelect.innerHTML = '<option value="">Seleccione tipo de equipo...</option>';
+            equipoSelect.innerHTML = '<option value="">Primero seleccione tipo...</option>';
+            equipoSelect.disabled = true;
+
+            if (cat && equiposEstructura[cat]) {
+                subcategoriaSelect.disabled = false;
+                Object.keys(equiposEstructura[cat]).forEach(sub => {
+                    const opt = document.createElement('option');
+                    opt.value = sub;
+                    opt.textContent = sub;
+                    subcategoriaSelect.appendChild(opt);
+                });
+            } else {
+                subcategoriaSelect.disabled = true;
+            }
+            configurarPunto2SegunEquipo();
+        });
+
+        // 2. Selección Subcategoría -> Carga Equipos Específicos
+        subcategoriaSelect.addEventListener('change', function() {
+            const cat = categoriaSelect.value;
+            const sub = this.value;
+            equipoSelect.innerHTML = '<option value="">Seleccione equipo específico...</option>';
+
+            if (cat && sub && equiposEstructura[cat] && equiposEstructura[cat][sub]) {
+                equipoSelect.disabled = false;
+                equiposEstructura[cat][sub].forEach(eq => {
+                    const opt = document.createElement('option');
+                    opt.value = eq.label;
+                    opt.dataset.id = eq.id;
+                    opt.dataset.abastecimiento = eq.esAbastecimiento ? "true" : "false";
+                    opt.textContent = eq.label;
+                    equipoSelect.appendChild(opt);
+                });
+            } else {
+                equipoSelect.disabled = true;
+            }
+            configurarPunto2SegunEquipo();
+        });
+
+        equipoSelect.addEventListener('change', configurarPunto2SegunEquipo);
+
+        function esCamionetaAbastecimiento() {
+            const selectedOption = equipoSelect.options[equipoSelect.selectedIndex];
+            return selectedOption && selectedOption.dataset.abastecimiento === "true";
+        }
+
+        function configurarPunto2SegunEquipo() {
+            const cat = categoriaSelect.value;
+            const sub = subcategoriaSelect.value;
+            const esAbast = esCamionetaAbastecimiento();
+
+            const panelInicial = document.getElementById('panel-inicial');
+            const panelCamioneta = document.getElementById('panel-camioneta');
+            const panelMaquinaria = document.getElementById('panel-maquinaria');
+            const panelReparto = document.getElementById('panel-reparto-combustible');
+            const containerCisterna = document.getElementById('container-cisterna-carga');
+            const lblPunto3 = document.getElementById('lbl-punto3-titulo');
+            const lblGasoilInput = document.getElementById('lbl-gasoil-input');
+            const inputComentarios = document.getElementById('camioneta-comentarios');
+
+            panelInicial.classList.add('hidden');
+            document.querySelectorAll('.sec-panel').forEach(p => p.classList.add('hidden'));
+
+            // Configurar Punto 3 según si es AG022VW (abastecimiento) o equipo regular
+            if (esAbast) {
+                containerCisterna.classList.remove('hidden');
+                lblPunto3.textContent = "Control de Carga Cisterna y Consumo Propio";
+                lblGasoilInput.textContent = "Gasoil Motor Propio Camioneta (Litros)";
+            } else {
+                containerCisterna.classList.add('hidden');
+                lblPunto3.textContent = "Carga de Gasoil";
+                lblGasoilInput.textContent = "Litros de Gasoil Cargados hoy (Consumo Propio)";
+            }
+
+            if (!cat || !sub) {
+                panelInicial.classList.remove('hidden');
+                sec2Titulo.textContent = "Actividad y Detalle de Jornada";
+                return;
+            }
+
+            if (sub === "Camioneta" || cat === "Livianos") {
+                panelCamioneta.classList.remove('hidden');
+                if (esAbast) {
+                    sec2Titulo.textContent = "Recorrido, Actividad y Reparto de Combustible";
+                    inputComentarios.placeholder = "Ej: Transporte de personal, sereno nocturno, abastecimiento de combustible, etc.";
+                    panelReparto.classList.remove('hidden');
+                    if (document.querySelectorAll('.reparto-item').length === 0) {
+                        agregarFilaReparto();
+                    }
+                } else {
+                    sec2Titulo.textContent = "Recorrido y Actividad de Camioneta";
+                    inputComentarios.placeholder = "Ej: Transporte de personal, sereno nocturno, recorrida de obra, etc.";
+                    panelReparto.classList.add('hidden');
+                }
+            } else {
+                sec2Titulo.textContent = "Sector y Detalle del Trabajo";
+                panelMaquinaria.classList.remove('hidden');
+            }
+        }
+
+        // Gestión dinámica de filas de reparto de combustible (AG022VW)
+        document.getElementById('btn-add-reparto').addEventListener('click', agregarFilaReparto);
+
+        function agregarFilaReparto() {
+            const lista = document.getElementById('repartos-lista');
+            const div = document.createElement('div');
+            div.className = "reparto-item grid grid-cols-1 sm:grid-cols-12 gap-3 items-center bg-slate-950/50 p-3.5 rounded-xl border border-slate-800 fade-in";
+            
+            const opcionesEq = listaEquiposReceptores.map(eq => `<option value="${eq}">${eq}</option>`).join('');
+
+            div.innerHTML = `
+                <div class="sm:col-span-7">
+                    <label class="block text-xs text-slate-400 mb-1">Equipo Receptor</label>
+                    <select class="reparto-receptor w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2.5 text-slate-100 text-sm focus:outline-none focus:ring-2 focus:ring-[#b41f25]">
+                        <option value="">Seleccione equipo receptor...</option>
+                        ${opcionesEq}
+                    </select>
+                </div>
+                <div class="sm:col-span-4">
+                    <label class="block text-xs text-slate-400 mb-1">Litros Despachados</label>
+                    <input type="number" min="0" step="0.1" placeholder="Ej: 150" class="reparto-litros w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2.5 text-slate-100 text-sm focus:outline-none focus:ring-2 focus:ring-[#b41f25]">
+                </div>
+                <div class="sm:col-span-1 flex justify-end pt-2 sm:pt-4">
+                    <button type="button" onclick="this.closest('.reparto-item').remove()" title="Eliminar fila" class="text-slate-500 hover:text-red-400 transition-colors p-1">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
+                    </button>
+                </div>
+            `;
+            lista.appendChild(div);
+        }
+
+        // Toggle Paradas / Detenciones
+        chkDetencion.addEventListener('change', function() {
+            panelDetencion.classList.toggle('hidden', !this.checked);
+        });
+
+        detencionTipo.addEventListener('change', function() {
+            containerOtro.classList.toggle('hidden', this.value !== "Otro");
+        });
+
+        // Cálculo automático de Km Recorridos (Camionetas)
+        const kmInicialInput = document.getElementById('camioneta-km-inicial');
+        const kmFinalInput = document.getElementById('camioneta-km-final');
+        const kmRecorridosInput = document.getElementById('camioneta-km');
+
+        function calcularKmRecorridos() {
+            const ini = parseFloat(kmInicialInput.value);
+            const fin = parseFloat(kmFinalInput.value);
+
+            if (isNaN(ini) || isNaN(fin)) {
+                kmRecorridosInput.value = "0";
+                kmRecorridosInput.classList.remove('text-red-400');
+                kmRecorridosInput.classList.add('text-emerald-400');
+                return 0;
+            }
+
+            const diff = fin - ini;
+            if (diff < 0) {
+                kmRecorridosInput.value = "0 (Verificar Final < Inicial)";
+                kmRecorridosInput.classList.remove('text-emerald-400');
+                kmRecorridosInput.classList.add('text-red-400');
+                return 0;
+            }
+
+            const resultado = Number.isInteger(diff) ? diff.toString() : diff.toFixed(1);
+            kmRecorridosInput.value = resultado;
+            kmRecorridosInput.classList.remove('text-red-400');
+            kmRecorridosInput.classList.add('text-emerald-400');
+            return parseFloat(resultado);
+        }
+
+        kmInicialInput.addEventListener('input', calcularKmRecorridos);
+        kmFinalInput.addEventListener('input', calcularKmRecorridos);
+
+        // Cálculo automático de Horas Trabajadas (Maquinaria)
+        const horoInicialInput = document.getElementById('maquinaria-horo-inicial');
+        const horoFinalInput = document.getElementById('maquinaria-horo-final');
+        const horasTrabajadasInput = document.getElementById('maquinaria-horas-trabajadas');
+
+        function calcularHorasTrabajadas() {
+            const ini = parseFloat(horoInicialInput.value);
+            const fin = parseFloat(horoFinalInput.value);
+
+            if (isNaN(ini) || isNaN(fin)) {
+                horasTrabajadasInput.value = "0.0";
+                horasTrabajadasInput.classList.remove('text-red-400');
+                horasTrabajadasInput.classList.add('text-emerald-400');
+                return 0;
+            }
+
+            const diff = fin - ini;
+            if (diff < 0) {
+                horasTrabajadasInput.value = "0.0 (Verificar Final < Inicial)";
+                horasTrabajadasInput.classList.remove('text-emerald-400');
+                horasTrabajadasInput.classList.add('text-red-400');
+                return 0;
+            }
+
+            const resultado = diff.toFixed(1);
+            horasTrabajadasInput.value = resultado;
+            horasTrabajadasInput.classList.remove('text-red-400');
+            horasTrabajadasInput.classList.add('text-emerald-400');
+            return parseFloat(resultado);
+        }
+
+        horoInicialInput.addEventListener('input', calcularHorasTrabajadas);
+        horoFinalInput.addEventListener('input', calcularHorasTrabajadas);
+
+        // ENVÍO DE DATOS Y GENERACIÓN DE REPORTE
+        form.addEventListener('submit', async function(e) {
+            e.preventDefault();
+
+            const operador = operadorInput.value.trim();
+            const categoria = categoriaSelect.value;
+            const subcategoria = subcategoriaSelect.value;
+            const equipo = equipoSelect.value;
+            const esAbast = esCamionetaAbastecimiento();
+
+            if (!operador) {
+                showToast("Por favor, ingrese el nombre del chofer / operador");
+                return;
+            }
+
+            if (!equipo) {
+                showToast("Por favor, seleccione un equipo");
+                return;
+            }
+
+            const fechaStr = new Date().toLocaleDateString('es-AR');
+            const gasoilLts = document.getElementById('gasoil-litros').value || 0;
+            const cisternaLts = esAbast ? (document.getElementById('cisterna-litros').value || 0) : 0;
+
+            let tieneDetencion = chkDetencion.checked;
+            let detencionMotivo = "-";
+            let detencionObservacion = "-";
+
+            if (tieneDetencion) {
+                let tipo = detencionTipo.value;
+                if (tipo === "Otro") {
+                    detencionMotivo = document.getElementById('detencion-otro-texto').value.trim() || "Otro motivo sin especificar";
+                } else {
+                    detencionMotivo = tipo;
+                }
+                detencionObservacion = document.getElementById('detencion-observacion').value.trim() || "Sin observaciones adicionales";
+            }
+
+            let filasPayload = [];
+            let detalleTextoReporte = "";
+
+            if (subcategoria === "Camioneta" || categoria === "Livianos") {
+                const kmIniVal = kmInicialInput.value !== "" ? parseFloat(kmInicialInput.value) : null;
+                const kmFinVal = kmFinalInput.value !== "" ? parseFloat(kmFinalInput.value) : null;
+
+                if (kmIniVal !== null && kmFinVal !== null && kmFinVal < kmIniVal) {
+                    showToast("El Km Final no puede ser menor al Km Inicial");
+                    return;
+                }
+
+                const kmInicialStr = kmIniVal !== null ? kmIniVal : 0;
+                const kmFinalStr = kmFinVal !== null ? kmFinVal : 0;
+                const kmRecorridos = calcularKmRecorridos();
+                const comentarios = document.getElementById('camioneta-comentarios').value.trim() || "Sin comentarios";
+
+                if (esAbast) {
+                    const repartos = document.querySelectorAll('.reparto-item');
+                    let entregasValidas = [];
+                    repartos.forEach(r => {
+                        const rec = r.querySelector('.reparto-receptor').value;
+                        const lt = r.querySelector('.reparto-litros').value;
+                        if (rec || (lt && parseFloat(lt) > 0)) {
+                            entregasValidas.push({
+                                receptor: rec || "Equipo sin especificar",
+                                litros: lt || 0
+                            });
+                        }
+                    });
+
+                    // Registro unificado para Camionetas + Carga_Gasoil en Google Sheets
+                    filasPayload.push({
+                        fecha: fechaStr,
+                        turno: turnoSeleccionado,
+                        operador: operador,
+                        categoria: categoria,
+                        equipo: equipo,
+                        frente: 'CAMIONETA',
+                        kmInicial: kmInicialStr,
+                        kmFinal: kmFinalStr,
+                        kmRecorridos: kmRecorridos,
+                        comentarios: comentarios,
+                        combustibleCisterna: cisternaLts,
+                        repartos: entregasValidas,
+                        gasoil: gasoilLts,
+                        detencion: tieneDetencion ? 'SI' : 'NO',
+                        detencionMotivo: detencionMotivo,
+                        detencionObservacion: detencionObservacion
+                    });
+
+                    detalleTextoReporte = `🚗 Kilometraje: Inicial ${kmInicialStr} Km → Final ${kmFinalStr} Km (Recorridos: ${kmRecorridos} Km)\n📝 Actividad / Comentarios: ${comentarios}\n`;
+                    detalleTextoReporte += `🛢️ Ingreso Tanque Abastecimiento: ${cisternaLts} Lts\n`;
+                    if (entregasValidas.length > 0) {
+                        detalleTextoReporte += `⛽ Entregas de Combustible (${entregasValidas.length}):\n`;
+                        entregasValidas.forEach(ent => {
+                            detalleTextoReporte += `   • ${ent.receptor}: ${ent.litros} Lts\n`;
+                        });
+                    } else {
+                        detalleTextoReporte += `⛽ Entregas de Combustible: Sin entregas registradas\n`;
+                    }
+                    detalleTextoReporte = detalleTextoReporte.trimEnd();
+                } else {
+                    filasPayload.push({
+                        fecha: fechaStr,
+                        turno: turnoSeleccionado,
+                        operador: operador,
+                        categoria: categoria,
+                        equipo: equipo,
+                        frente: 'CAMIONETA',
+                        kmInicial: kmInicialStr,
+                        kmFinal: kmFinalStr,
+                        kmRecorridos: kmRecorridos,
+                        comentarios: comentarios,
+                        gasoil: gasoilLts,
+                        detencion: tieneDetencion ? 'SI' : 'NO',
+                        detencionMotivo: detencionMotivo,
+                        detencionObservacion: detencionObservacion
+                    });
+
+                    detalleTextoReporte = `🚗 Kilometraje: Inicial ${kmInicialStr} Km → Final ${kmFinalStr} Km (Recorridos: ${kmRecorridos} Km)\n📝 Actividad / Comentarios: ${comentarios}`;
+                }
+            } else {
+                const horoIniVal = horoInicialInput.value !== "" ? parseFloat(horoInicialInput.value) : null;
+                const horoFinVal = horoFinalInput.value !== "" ? parseFloat(horoFinalInput.value) : null;
+
+                if (horoIniVal !== null && horoFinVal !== null && horoFinVal < horoIniVal) {
+                    showToast("El Horómetro Final no puede ser menor al Horómetro Inicial");
+                    return;
+                }
+
+                const horoInicialStr = horoIniVal !== null ? horoIniVal.toFixed(1) : "0.0";
+                const horoFinalStr = horoFinVal !== null ? horoFinVal.toFixed(1) : "0.0";
+                const horasTrabajadas = calcularHorasTrabajadas().toFixed(1);
+                const sectorTrabajo = document.getElementById('maquinaria-sector').value.trim() || "Sin sector especificado";
+                const detalleTrabajo = document.getElementById('maquinaria-detalle').value.trim() || "Sin detalle especificado";
+
+                filasPayload.push({
+                    fecha: fechaStr,
+                    turno: turnoSeleccionado,
+                    operador: operador,
+                    categoria: categoria,
+                    equipo: equipo,
+                    frente: subcategoria.toUpperCase(),
+                    sector: sectorTrabajo,
+                    horometroInicial: horoInicialStr,
+                    horometroFinal: horoFinalStr,
+                    horasTrabajadas: horasTrabajadas,
+                    detalleTrabajo: detalleTrabajo,
+                    gasoil: gasoilLts,
+                    detencion: tieneDetencion ? 'SI' : 'NO',
+                    detencionMotivo: detencionMotivo,
+                    detencionObservacion: detencionObservacion
+                });
+
+                detalleTextoReporte = `⏱️ Horómetro: Inicial ${horoInicialStr} Hs → Final ${horoFinalStr} Hs (Trabajadas: ${horasTrabajadas} Hs)\n📍 Sector de Trabajo: ${sectorTrabajo}\n🛠️ Detalle del Trabajo: ${detalleTrabajo}`;
+            }
+
+            // Texto Resumen para Copiar
+            let reporte = `📋 PARTE DIARIO DE OBRA - BSD\n`;
+            reporte += `--------------------------------------------------\n`;
+            reporte += `📅 Fecha: ${fechaStr} | ⏱️ Turno: ${turnoSeleccionado}\n`;
+            reporte += `👤 Chofer / Operador: ${operador}\n`;
+            reporte += `🚜 Equipo: ${equipo}\n`;
+            reporte += `--------------------------------------------------\n`;
+            reporte += `${detalleTextoReporte}\n`;
+            reporte += `⛽ Gasoil Motor Propio: ${gasoilLts} Lts\n`;
+            reporte += `⚠️ Paradas / Novedades: ${tieneDetencion ? 'SI (' + detencionMotivo + ' - ' + detencionObservacion + ')' : 'NO'}\n`;
+            reporte += `--------------------------------------------------`;
+
+            reporteTexto.innerText = reporte;
+            resultadoContainer.classList.remove('hidden');
+
+            if (GOOGLE_SCRIPT_URL && GOOGLE_SCRIPT_URL.includes('script.google.com')) {
+                btnSubmit.disabled = true;
+                btnSubmit.classList.add('opacity-50');
+                showToast("Cargando registro en Google Sheets...");
+
+                try {
+                    await fetch(GOOGLE_SCRIPT_URL, {
+                        method: 'POST',
+                        mode: 'no-cors',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(filasPayload)
+                    });
+                    showToast("¡Reporte generado y enviado con éxito!");
+                } catch (err) {
+                    showToast("Reporte generado (sin conexión externa)");
+                } finally {
+                    btnSubmit.disabled = false;
+                    btnSubmit.classList.remove('opacity-50');
+                }
+            }
+
+            resultadoContainer.scrollIntoView({ behavior: 'smooth' });
+        });
+
+        // Copiar Reporte al Portapapeles
+        document.getElementById('btn-copiar').addEventListener('click', function() {
+            const texto = reporteTexto.innerText;
+            const textarea = document.createElement('textarea');
+            textarea.value = texto;
+            document.body.appendChild(textarea);
+            textarea.select();
+            document.execCommand('copy');
+            document.body.removeChild(textarea);
+            showToast("Reporte copiado al portapapeles");
+        });
+
+        // Descargar CSV
+        document.getElementById('btn-csv').addEventListener('click', function() {
+            const fechaStr = new Date().toISOString().split('T')[0];
+            const operador = operadorInput.value.trim() || "SinOperador";
+            const equipo = equipoSelect.value || "SinEquipo";
+            const esCamioneta = subcategoriaSelect.value === "Camioneta" || categoriaSelect.value === "Livianos";
+            const gasoilLts = document.getElementById('gasoil-litros').value || 0;
+            const cisternaLts = esCamionetaAbastecimiento() ? (document.getElementById('cisterna-litros').value || 0) : "-";
+
+            const kmIni = esCamioneta ? (kmInicialInput.value || 0) : "-";
+            const kmFin = esCamioneta ? (kmFinalInput.value || 0) : "-";
+            const kmRec = esCamioneta ? calcularKmRecorridos() : "-";
+
+            const horoIni = !esCamioneta ? (horoInicialInput.value || 0) : "-";
+            const horoFin = !esCamioneta ? (horoFinalInput.value || 0) : "-";
+            const horasTrab = !esCamioneta ? calcularHorasTrabajadas().toFixed(1) : "-";
+
+            const sector = document.getElementById('maquinaria-sector').value.trim() || "-";
+            const detalle = (document.getElementById('camioneta-comentarios').value.trim() || document.getElementById('maquinaria-detalle').value.trim() || "-").replace(/"/g, '""');
+            
+            let csvContent = "data:text/csv;charset=utf-8,";
+            csvContent += "Fecha,Turno,Operador,Categoria,Equipo,Km_Inicial,Km_Final,Km_Recorridos,Horometro_Inicial,Horometro_Final,Horas_Trabajadas,Sector,Detalle_Comentarios,Gasoil_Motor_Lts,Ingreso_Cisterna_Lts,Paradas\n";
+            csvContent += `"${fechaStr}","${turnoSeleccionado}","${operador}","${categoriaSelect.value}","${equipo}","${kmIni}","${kmFin}","${kmRec}","${horoIni}","${horoFin}","${horasTrab}","${sector}","${detalle}",${gasoilLts},"${cisternaLts}","${chkDetencion.checked ? 'SI' : 'NO'}"\n`;
+
+            const encodedUri = encodeURI(csvContent);
+            const link = document.createElement("a");
+            link.setAttribute("href", encodedUri);
+            link.setAttribute("download", `Parte_Diario_${fechaStr}_${operador.replace(/\s+/g, '_')}.csv`);
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            showToast("Archivo CSV descargado");
+        });
+
+        // Limpiar Formulario
+        document.getElementById('btn-limpiar').addEventListener('click', function() {
+            form.reset();
+            kmRecorridosInput.value = "0";
+            kmRecorridosInput.classList.remove('text-red-400');
+            kmRecorridosInput.classList.add('text-emerald-400');
+            horasTrabajadasInput.value = "0.0";
+            horasTrabajadasInput.classList.remove('text-red-400');
+            horasTrabajadasInput.classList.add('text-emerald-400');
+            subcategoriaSelect.disabled = true;
+            subcategoriaSelect.innerHTML = '<option value="">Primero seleccione categoría...</option>';
+            equipoSelect.disabled = true;
+            equipoSelect.innerHTML = '<option value="">Primero seleccione tipo...</option>';
+            document.getElementById('repartos-lista').innerHTML = '';
+            document.getElementById('panel-reparto-combustible').classList.add('hidden');
+            document.getElementById('container-cisterna-carga').classList.add('hidden');
+            panelDetencion.classList.add('hidden');
+            containerOtro.classList.add('hidden');
+            resultadoContainer.classList.add('hidden');
+            
+            document.querySelectorAll('.sec-panel').forEach(p => p.classList.add('hidden'));
+            document.getElementById('panel-inicial').classList.remove('hidden');
+            sec2Titulo.textContent = "Actividad y Detalle de Jornada";
+            lblPunto3 = document.getElementById('lbl-punto3-titulo').textContent = "Carga de Gasoil";
+            showToast("Formulario reajustado");
+        });
+
+        function showToast(msg) {
+            const toast = document.getElementById('toast');
+            document.getElementById('toast-msg').innerText = msg;
+            toast.classList.remove('translate-y-20', 'opacity-0');
+            toast.classList.add('translate-y-0', 'opacity-100');
+            setTimeout(() => {
+                toast.classList.remove('translate-y-0', 'opacity-100');
+                toast.classList.add('translate-y-20', 'opacity-0');
+            }, 3000);
+        }
+    </script>
+</body>
+</html>
