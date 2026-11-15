@@ -60,25 +60,16 @@
                     <p class="text-xs text-slate-400 hidden sm:block">Control de Equipos, Personal, Combustible y Actividades</p>
                 </div>
 
-                <!-- Logo Cliente (Derecha) -->
-                <div class="bg-white px-3 py-1.5 rounded-xl shadow-md shrink-0 flex items-center justify-center border border-slate-200 h-12 sm:h-14 min-w-[90px]">
-                    <img src="logocliente.png" alt="Logo Cliente" class="max-h-9 sm:max-h-11 w-auto object-contain" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
-                    <span class="hidden text-xs font-extrabold text-slate-700 tracking-wider">CLIENTE</span>
+                <!-- Logo Cliente SSR MINING (Derecha) -->
+                <div class="bg-white px-3 py-1.5 rounded-xl shadow-md shrink-0 flex items-center justify-center border border-slate-200 h-12 sm:h-14 min-w-[96px]">
+                    <img src="logocliente.png" alt="Logo SSR Mining" class="max-h-9 sm:max-h-11 w-auto object-contain" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+                    <span class="hidden text-xs font-extrabold text-slate-800 tracking-wider">SSR MINING</span>
                 </div>
             </div>
 
-            <!-- Fila Inferior: Fecha y Selector de Turno -->
-            <div class="flex flex-wrap items-center justify-between gap-3 pt-2 border-t border-slate-700/60">
-                <div id="date-display" class="bg-slate-700/60 px-3.5 py-1.5 rounded-xl text-xs text-slate-200 font-medium border border-slate-600 capitalize"></div>
-
-                <div class="bg-slate-900 border border-slate-700 rounded-xl p-1 flex items-center shadow-inner ml-auto">
-                    <button type="button" id="turno-dia" class="px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-all bg-[#b41f25] text-white shadow">
-                        ☀️ Turno Día
-                    </button>
-                    <button type="button" id="turno-noche" class="px-3.5 py-1.5 rounded-lg text-xs font-semibold text-slate-400 hover:text-slate-200 transition-all">
-                        🌙 Turno Noche
-                    </button>
-                </div>
+            <!-- Fila Inferior: Fecha -->
+            <div class="flex items-center justify-center pt-2 border-t border-slate-700/60">
+                <div id="date-display" class="bg-slate-700/60 px-4 py-1.5 rounded-xl text-xs text-slate-200 font-medium border border-slate-600 capitalize"></div>
             </div>
 
         </div>
@@ -138,7 +129,7 @@
                     </div>
                 </div>
 
-                <!-- BLOQUE B: SELECCIÓN DE PERSONAL (RELLENO AUTOMÁTICO SIN DESPLEGABLE DE NOMBRES) -->
+                <!-- BLOQUE B: SELECCIÓN DE PERSONAL (RELLENO AUTOMÁTICO) -->
                 <div id="bloque-identificacion-personal" class="hidden grid grid-cols-1 md:grid-cols-12 gap-5 fade-in">
                     <div class="md:col-span-4">
                         <label class="block text-sm font-medium text-slate-300 mb-1.5">1. Área / Rol del Personal</label>
@@ -199,7 +190,7 @@
 
                         <div>
                             <label class="block text-sm font-medium text-slate-300 mb-1.5">Actividad / Comentarios de la Jornada</label>
-                            <input type="text" id="camioneta-comentarios" placeholder="Ej: Transporte de personal, sereno nocturno, recorrida de obra, etc." class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-3 text-slate-100 focus:outline-none focus:ring-2 focus:ring-[#b41f25]">
+                            <input type="text" id="camioneta-comentarios" placeholder="Ej: Transporte de personal, recorrida de obra, etc." class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-3 text-slate-100 focus:outline-none focus:ring-2 focus:ring-[#b41f25]">
                         </div>
 
                         <!-- Sección Exclusiva Camioneta AG022VW -->
@@ -251,7 +242,7 @@
                         </div>
                         <div>
                             <label class="block text-sm font-medium text-slate-300 mb-1.5">Detalle del Trabajo Realizado</label>
-                            <textarea id="maquinaria-detalle" rows="3" placeholder="Describa las tareas ejecutadas durante el turno..." class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-3 text-slate-100 focus:outline-none focus:ring-2 focus:ring-[#b41f25]"></textarea>
+                            <textarea id="maquinaria-detalle" rows="3" placeholder="Describa las tareas ejecutadas durante la jornada..." class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-3 text-slate-100 focus:outline-none focus:ring-2 focus:ring-[#b41f25]"></textarea>
                         </div>
                     </div>
 
@@ -263,8 +254,8 @@
                                 <input type="text" id="personal-sector" placeholder="Ej: Frente Norte, Obrador, Planta..." class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-3 text-slate-100 focus:outline-none focus:ring-2 focus:ring-[#b41f25]">
                             </div>
                             <div>
-                                <label class="block text-sm font-medium text-slate-300 mb-1.5">Empresa</label>
-                                <input type="text" id="personal-empresa" value="BSD" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-3 text-slate-100 focus:outline-none focus:ring-2 focus:ring-[#b41f25]">
+                                <label class="block text-sm font-medium text-slate-300 mb-1.5">Empresa (Cliente)</label>
+                                <input type="text" id="personal-empresa" value="SSR MINING" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-3 text-slate-100 font-semibold focus:outline-none focus:ring-2 focus:ring-[#b41f25]">
                             </div>
                         </div>
 
@@ -318,7 +309,7 @@
                         </div>
                     </div>
                     <div id="lbl-gasoil-desc" class="text-xs text-slate-400 bg-slate-900/50 p-3.5 rounded-xl border border-slate-700/50">
-                        ⛽ Registre la cantidad total de litros de combustible cargados al tanque propio del equipo durante el turno.
+                        ⛽ Registre la cantidad total de litros de combustible cargados al tanque propio del equipo durante la jornada.
                     </div>
                 </div>
             </div>
@@ -444,7 +435,7 @@
         const personalAsignado = {
             "Ayudantes": "Flores Villegas Ramon, Colqui Cristian Elias, Callata Alan, Bustamante Cristian, Vargas Jose Luis, Colqui Nelson",
             "Prevencionista": "Veronica Blanco",
-            "Supervisor": "Verda del Valle"
+            "Supervisor": "Vera Del Valle"
         };
 
         const listaEquiposReceptores = [
@@ -488,23 +479,6 @@
         // Mostrar Fecha Actual
         document.getElementById('date-display').innerText = new Date().toLocaleDateString('es-AR', { 
             weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' 
-        });
-
-        // Selector de Turno
-        let turnoSeleccionado = "Turno Día";
-        const btnDia = document.getElementById('turno-dia');
-        const btnNoche = document.getElementById('turno-noche');
-
-        btnDia.addEventListener('click', () => {
-            turnoSeleccionado = "Turno Día";
-            btnDia.className = "px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-all bg-[#b41f25] text-white shadow";
-            btnNoche.className = "px-3.5 py-1.5 rounded-lg text-xs font-semibold text-slate-400 hover:text-slate-200 transition-all";
-        });
-
-        btnNoche.addEventListener('click', () => {
-            turnoSeleccionado = "Turno Noche";
-            btnNoche.className = "px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-all bg-[#b41f25] text-white shadow";
-            btnDia.className = "px-3.5 py-1.5 rounded-lg text-xs font-semibold text-slate-400 hover:text-slate-200 transition-all";
         });
 
         // Cambio entre Modo Máquinas y Modo Personal
@@ -687,14 +661,14 @@
                 panelCamioneta.classList.remove('hidden');
                 if (esAbast) {
                     sec2Titulo.textContent = "Recorrido, Actividad y Reparto de Combustible";
-                    inputComentarios.placeholder = "Ej: Transporte de personal, sereno nocturno, abastecimiento de combustible, etc.";
+                    inputComentarios.placeholder = "Ej: Transporte de personal, abastecimiento de combustible, etc.";
                     panelReparto.classList.remove('hidden');
                     if (document.querySelectorAll('.reparto-item').length === 0) {
                         agregarFilaReparto();
                     }
                 } else {
                     sec2Titulo.textContent = "Recorrido y Actividad de Camioneta";
-                    inputComentarios.placeholder = "Ej: Transporte de personal, sereno nocturno, recorrida de obra, etc.";
+                    inputComentarios.placeholder = "Ej: Transporte de personal, recorrida de obra, etc.";
                     panelReparto.classList.add('hidden');
                 }
             } else {
@@ -825,7 +799,7 @@
                 }
 
                 const sector = document.getElementById('personal-sector').value.trim() || "Obra General";
-                const empresa = document.getElementById('personal-empresa').value.trim() || "BSD";
+                const empresa = document.getElementById('personal-empresa').value.trim() || "SSR MINING";
                 const detalleTrabajo = document.getElementById('personal-detalle').value.trim();
 
                 if (!detalleTrabajo) {
@@ -839,7 +813,7 @@
 
                 filasPayload.push({
                     fecha: fechaStr,
-                    turno: turnoSeleccionado,
+                    turno: "-",
                     frente: 'PERSONAL',
                     rolPersonal: rolPersonal,
                     operador: nombrePersonal,
@@ -858,9 +832,9 @@
                     detencionObservacion: detencionObservacion
                 });
 
-                reporte = `📋 PARTE DIARIO INTERNO DE PERSONAL - BSD\n`;
+                reporte = `📋 PARTE DIARIO DE PERSONAL - BSD\n`;
                 reporte += `--------------------------------------------------\n`;
-                reporte += `📅 Fecha: ${fechaStr} | ⏱️ Turno: ${turnoSeleccionado}\n`;
+                reporte += `📅 Fecha: ${fechaStr}\n`;
                 reporte += `👷 Área: ${rolPersonal}\n`;
                 reporte += `👤 Personal: ${nombrePersonal}\n`;
                 reporte += `📍 Sector: ${sector} | 🏢 Empresa: ${empresa}\n`;
@@ -923,7 +897,7 @@
 
                     filasPayload.push({
                         fecha: fechaStr,
-                        turno: turnoSeleccionado,
+                        turno: "-",
                         operador: operador,
                         categoria: categoria,
                         equipo: equipo,
@@ -967,7 +941,7 @@
 
                     filasPayload.push({
                         fecha: fechaStr,
-                        turno: turnoSeleccionado,
+                        turno: "-",
                         operador: operador,
                         categoria: categoria,
                         equipo: equipo,
@@ -988,7 +962,7 @@
 
                 reporte = `📋 PARTE DIARIO DE OBRA - BSD\n`;
                 reporte += `--------------------------------------------------\n`;
-                reporte += `📅 Fecha: ${fechaStr} | ⏱️ Turno: ${turnoSeleccionado}\n`;
+                reporte += `📅 Fecha: ${fechaStr} | 🏢 Empresa: SSR MINING\n`;
                 reporte += `👤 Chofer / Operador: ${operador}\n`;
                 reporte += `🚜 Equipo: ${equipo}\n`;
                 reporte += `--------------------------------------------------\n`;
@@ -1046,18 +1020,19 @@
                 const rol = personalRolSelect.value || "Personal";
                 const nombre = personalNombreAuto.value || "SinNombre";
                 const sector = document.getElementById('personal-sector').value.trim() || "-";
+                const empresa = document.getElementById('personal-empresa').value.trim() || "SSR MINING";
                 const tarea = (document.getElementById('personal-detalle').value.trim() || "-").replace(/"/g, '""');
                 const tiempo = calcularTiempoPersonal().texto;
-                csvContent += "Fecha,Turno,Rol,Personal,Sector,Empezo,Termino,Tiempo,Tareas\n";
-                csvContent += `"${fechaStr}","${turnoSeleccionado}","${rol}","${nombre}","${sector}","${empezoInput.value}","${terminoInput.value}","${tiempo}","${tarea}"\n`;
+                csvContent += "Fecha,Empresa,Rol,Personal,Sector,Empezo,Termino,Tiempo,Tareas\n";
+                csvContent += `"${fechaStr}","${empresa}","${rol}","${nombre}","${sector}","${empezoInput.value}","${terminoInput.value}","${tiempo}","${tarea}"\n`;
                 nombreArchivo = `Parte_Personal_${fechaStr}_${rol}.csv`;
             } else {
                 const operador = operadorInput.value.trim() || "SinOperador";
                 const equipo = equipoSelect.value || "SinEquipo";
                 const gasoilLts = document.getElementById('gasoil-litros').value || 0;
                 const detalle = (document.getElementById('camioneta-comentarios').value.trim() || document.getElementById('maquinaria-detalle').value.trim() || "-").replace(/"/g, '""');
-                csvContent += "Fecha,Turno,Operador,Equipo,Detalle,Gasoil_Lts\n";
-                csvContent += `"${fechaStr}","${turnoSeleccionado}","${operador}","${equipo}","${detalle}",${gasoilLts}\n`;
+                csvContent += "Fecha,Empresa,Operador,Equipo,Detalle,Gasoil_Lts\n";
+                csvContent += `"${fechaStr}","SSR MINING","${operador}","${equipo}","${detalle}",${gasoilLts}\n`;
                 nombreArchivo = `Parte_Equipo_${fechaStr}_${operador.replace(/\s+/g, '_')}.csv`;
             }
 
@@ -1073,6 +1048,7 @@
         // Limpiar Formulario
         document.getElementById('btn-limpiar').addEventListener('click', function() {
             form.reset();
+            document.getElementById('personal-empresa').value = "SSR MINING";
             kmRecorridosInput.value = "0";
             horasTrabajadasInput.value = "0.0";
             tiempoInput.value = "10 hs 00 min";
