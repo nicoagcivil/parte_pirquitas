@@ -23,10 +23,13 @@
             }
         }
     </script>
-    <!-- Google Fonts Inter -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Google Fonts Inter + Fuentes Caligráficas para Firma Estilo DocuSign -->
+    <link href="https://fonts.googleapis.com/css2?family=Alex+Brush&family=Caveat:wght@600;700&family=Great+Vibes&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
         body { font-family: 'Inter', sans-serif; }
+        .font-firma-1 { font-family: 'Great Vibes', cursive; }
+        .font-firma-2 { font-family: 'Alex Brush', cursive; }
+        .font-firma-3 { font-family: 'Caveat', cursive; }
         .fade-in {
             animation: fadeIn 0.25s ease-in-out;
         }
@@ -358,6 +361,63 @@
                 </div>
             </div>
 
+            <!-- PUNTO 5: Firma Electrónica Estilo DocuSign -->
+            <div class="bg-slate-800 border border-slate-700 rounded-2xl p-5 sm:p-6 shadow-xl relative overflow-hidden">
+                <div class="absolute top-0 left-0 w-1.5 h-full bg-[#b41f25]"></div>
+                <h2 class="text-lg font-semibold text-[#b41f25] flex items-center gap-2 mb-4">
+                    <span id="badge-punto5" class="bg-[#b41f25]/10 text-[#b41f25] w-7 h-7 rounded-lg flex items-center justify-center text-sm font-bold border border-[#b41f25]/20">5</span>
+                    Firma Electrónica de Conformidad
+                </h2>
+
+                <div class="space-y-4">
+                    <div class="flex items-center space-x-3 bg-slate-900 p-3.5 rounded-xl border border-slate-700">
+                        <input type="checkbox" id="chk-firma-digital" checked class="w-5 h-5 text-[#b41f25] rounded bg-slate-950 border-slate-700 focus:ring-[#b41f25] accent-[#b41f25] cursor-pointer">
+                        <label for="chk-firma-digital" class="text-sm font-medium text-slate-200 cursor-pointer">
+                            Incluir firma electrónica de validación en este parte diario
+                        </label>
+                    </div>
+
+                    <div id="panel-firma-digital" class="bg-slate-900/70 p-4 sm:p-5 rounded-xl border border-slate-700/70 space-y-4 fade-in">
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-400 uppercase mb-1.5">Nombre del Firmante (Editable)</label>
+                                <input type="text" id="firma-nombre-input" placeholder="Se completa automáticamente con el responsable..." class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-2.5 text-slate-100 text-sm focus:outline-none focus:ring-2 focus:ring-[#b41f25]">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-400 uppercase mb-1.5">Estilo de Firma</label>
+                                <div class="grid grid-cols-3 gap-2">
+                                    <button type="button" data-estilo="font-firma-1" class="btn-estilo-firma py-2 px-3 rounded-lg border text-xs font-semibold transition-all bg-[#b41f25] text-white border-[#b41f25]">Clásica</button>
+                                    <button type="button" data-estilo="font-firma-2" class="btn-estilo-firma py-2 px-3 rounded-lg border text-xs font-semibold transition-all bg-slate-900 text-slate-300 border-slate-700 hover:border-slate-500">Ejecutiva</button>
+                                    <button type="button" data-estilo="font-firma-3" class="btn-estilo-firma py-2 px-3 rounded-lg border text-xs font-semibold transition-all bg-slate-900 text-slate-300 border-slate-700 hover:border-slate-500">Rúbrica</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Tarjeta Sello Estilo DocuSign -->
+                        <div class="bg-white text-slate-900 rounded-xl p-4 sm:p-5 border-2 border-slate-300 shadow-inner relative max-w-md">
+                            <div class="flex items-center justify-between text-[10px] font-bold uppercase tracking-wider text-slate-500 border-b border-slate-200 pb-1.5 mb-2">
+                                <span class="flex items-center gap-1.5 text-emerald-700">
+                                    <span class="w-2 h-2 rounded-full bg-emerald-600"></span>
+                                    Firmado Electrónicamente • BSD
+                                </span>
+                                <span id="firma-hash-preview" class="font-mono text-slate-400">ID: BSD-000000</span>
+                            </div>
+
+                            <div class="border-l-4 border-[#b41f25] pl-3.5 py-1">
+                                <div id="firma-visual-texto" class="font-firma-1 text-3xl sm:text-4xl text-slate-900 leading-tight select-none min-h-[42px]">
+                                    Responsable de Obra
+                                </div>
+                            </div>
+
+                            <div class="mt-2 pt-1.5 border-t border-slate-200 flex items-center justify-between text-[11px] text-slate-500 font-mono">
+                                <span id="firma-cargo-preview">Parte Diario de Obra</span>
+                                <span id="firma-fecha-preview">--/--/----</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             <!-- Botones -->
             <div class="flex flex-col sm:flex-row gap-4 justify-end pt-2">
                 <button type="button" id="btn-limpiar" class="px-6 py-3 rounded-xl border border-slate-700 bg-slate-800 hover:bg-slate-700 text-slate-300 font-medium transition-all">
@@ -374,7 +434,7 @@
         </form>
 
         <!-- OUTPUT REPORTE -->
-        <div id="resultado-container" class="hidden mt-8 bg-slate-800 border border-slate-700 rounded-2xl p-5 sm:p-6 shadow-2xl space-y-4 fade-in">
+        <div id="resultado-container" class="hidden mt-8 bg-slate-800 border border-slate-700 rounded-2xl p-5 sm:p-6 shadow-2xl space-y-5 fade-in">
             <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
                 <h3 class="text-lg font-bold text-red-400 flex items-center gap-2">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -395,7 +455,23 @@
                     </button>
                 </div>
             </div>
+
             <div id="reporte-texto" class="bg-slate-900 border border-slate-700 p-4 rounded-xl text-sm font-mono text-slate-300 whitespace-pre-wrap leading-relaxed select-all"></div>
+
+            <!-- Comprobante Visual de Firma en el Reporte Generado -->
+            <div id="reporte-firma-box" class="hidden bg-white text-slate-900 rounded-xl p-4 border-2 border-slate-300 max-w-md shadow">
+                <div class="flex items-center justify-between text-[10px] font-bold uppercase tracking-wider text-slate-500 border-b border-slate-200 pb-1 mb-2">
+                    <span class="text-emerald-700">✓ Documento Firmado Electrónicamente</span>
+                    <span id="reporte-firma-id" class="font-mono text-slate-400"></span>
+                </div>
+                <div class="border-l-4 border-[#b41f25] pl-3 py-0.5">
+                    <div id="reporte-firma-visual" class="font-firma-1 text-3xl text-slate-900"></div>
+                </div>
+                <div class="mt-1.5 pt-1 border-t border-slate-200 flex justify-between text-[11px] text-slate-500 font-mono">
+                    <span id="reporte-firma-nombre-sub"></span>
+                    <span id="reporte-firma-timestamp"></span>
+                </div>
+            </div>
         </div>
 
     </main>
@@ -447,6 +523,8 @@
         ];
 
         let modoActual = 'MAQUINA';
+        let estiloFirmaActual = 'font-firma-1';
+        let firmaEditadaManualmente = false;
 
         // DOM Elements
         const btnModoMaquina = document.getElementById('btn-modo-maquina');
@@ -465,7 +543,16 @@
         const sec2Titulo = document.getElementById('sec2-titulo');
         const sec3Gasoil = document.getElementById('sec3-gasoil');
         const badgePunto4 = document.getElementById('badge-punto4');
+        const badgePunto5 = document.getElementById('badge-punto5');
         const lblChkDetencion = document.getElementById('lbl-chk-detencion');
+
+        const chkFirmaDigital = document.getElementById('chk-firma-digital');
+        const panelFirmaDigital = document.getElementById('panel-firma-digital');
+        const firmaNombreInput = document.getElementById('firma-nombre-input');
+        const firmaVisualTexto = document.getElementById('firma-visual-texto');
+        const firmaHashPreview = document.getElementById('firma-hash-preview');
+        const firmaCargoPreview = document.getElementById('firma-cargo-preview');
+        const firmaFechaPreview = document.getElementById('firma-fecha-preview');
 
         const form = document.getElementById('obra-form');
         const resultadoContainer = document.getElementById('resultado-container');
@@ -481,12 +568,78 @@
             weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' 
         });
 
+        // Lógica de Firma Electrónica (estilo DocuSign)
+        function generarCodigoFirma(texto) {
+            let hash = 0;
+            const base = (texto || 'BSD') + new Date().toLocaleDateString('es-AR');
+            for (let i = 0; i < base.length; i++) {
+                hash = ((hash << 5) - hash) + base.charCodeAt(i);
+                hash |= 0;
+            }
+            return 'BSD-' + Math.abs(hash).toString(16).toUpperCase().padStart(6, '0').slice(0, 8);
+        }
+
+        function actualizarVistaFirma() {
+            let sugerido = '';
+            let cargo = 'Parte Diario de Obra';
+
+            if (modoActual === 'MAQUINA') {
+                sugerido = operadorInput.value.trim();
+                cargo = equipoSelect.value ? `Operador • ${equipoSelect.value}` : 'Operador / Chofer';
+            } else {
+                const rol = personalRolSelect.value;
+                if (rol === 'Ayudantes') {
+                    sugerido = 'Cuadrilla Ayudantes BSD';
+                    cargo = 'Personal de Obra • Ayudantes';
+                } else {
+                    sugerido = personalNombreAuto.value.trim();
+                    cargo = rol ? `Personal • ${rol}` : 'Personal de Obra';
+                }
+            }
+
+            if (!firmaEditadaManualmente) {
+                firmaNombreInput.value = sugerido;
+            }
+
+            const nombreFinal = firmaNombreInput.value.trim() || 'Responsable de Obra';
+            firmaVisualTexto.textContent = nombreFinal;
+            firmaCargoPreview.textContent = cargo;
+            firmaHashPreview.textContent = 'ID: ' + generarCodigoFirma(nombreFinal);
+            firmaFechaPreview.textContent = new Date().toLocaleString('es-AR', {
+                day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit'
+            });
+        }
+
+        operadorInput.addEventListener('input', actualizarVistaFirma);
+        firmaNombreInput.addEventListener('input', () => {
+            firmaEditadaManualmente = firmaNombreInput.value.trim().length > 0;
+            actualizarVistaFirma();
+        });
+
+        chkFirmaDigital.addEventListener('change', function() {
+            panelFirmaDigital.classList.toggle('hidden', !this.checked);
+        });
+
+        document.querySelectorAll('.btn-estilo-firma').forEach(btn => {
+            btn.addEventListener('click', function() {
+                document.querySelectorAll('.btn-estilo-firma').forEach(b => {
+                    b.className = 'btn-estilo-firma py-2 px-3 rounded-lg border text-xs font-semibold transition-all bg-slate-900 text-slate-300 border-slate-700 hover:border-slate-500';
+                });
+                this.className = 'btn-estilo-firma py-2 px-3 rounded-lg border text-xs font-semibold transition-all bg-[#b41f25] text-white border-[#b41f25]';
+
+                firmaVisualTexto.classList.remove('font-firma-1', 'font-firma-2', 'font-firma-3');
+                estiloFirmaActual = this.dataset.estilo;
+                firmaVisualTexto.classList.add(estiloFirmaActual);
+            });
+        });
+
         // Cambio entre Modo Máquinas y Modo Personal
         btnModoMaquina.addEventListener('click', () => cambiarModo('MAQUINA'));
         btnModoPersonal.addEventListener('click', () => cambiarModo('PERSONAL'));
 
         function cambiarModo(nuevoModo) {
             modoActual = nuevoModo;
+            firmaEditadaManualmente = false;
             document.querySelectorAll('.sec-panel').forEach(p => p.classList.add('hidden'));
 
             if (nuevoModo === 'MAQUINA') {
@@ -497,6 +650,7 @@
                 bloqueIdPersonal.classList.add('hidden');
                 sec3Gasoil.classList.remove('hidden');
                 badgePunto4.textContent = "4";
+                badgePunto5.textContent = "5";
                 lblChkDetencion.textContent = "¿El equipo tuvo paradas, detenciones o novedades hoy?";
                 configurarPunto2SegunEquipo();
             } else {
@@ -507,16 +661,20 @@
                 bloqueIdPersonal.classList.remove('hidden');
                 sec3Gasoil.classList.add('hidden');
                 badgePunto4.textContent = "3";
+                badgePunto5.textContent = "4";
                 lblChkDetencion.textContent = "¿Hubo novedades, observaciones especiales o interrupciones hoy?";
                 configurarPanelPersonal();
             }
+            actualizarVistaFirma();
         }
 
         // Relleno automático de nombres al elegir el rol de Personal
         personalRolSelect.addEventListener('change', function() {
             const rol = this.value;
             personalNombreAuto.value = personalAsignado[rol] || "";
+            firmaEditadaManualmente = false;
             configurarPanelPersonal();
+            actualizarVistaFirma();
         });
 
         function configurarPanelPersonal() {
@@ -592,6 +750,7 @@
                 subcategoriaSelect.disabled = true;
             }
             configurarPunto2SegunEquipo();
+            actualizarVistaFirma();
         });
 
         subcategoriaSelect.addEventListener('change', function() {
@@ -613,9 +772,13 @@
                 equipoSelect.disabled = true;
             }
             configurarPunto2SegunEquipo();
+            actualizarVistaFirma();
         });
 
-        equipoSelect.addEventListener('change', configurarPunto2SegunEquipo);
+        equipoSelect.addEventListener('change', () => {
+            configurarPunto2SegunEquipo();
+            actualizarVistaFirma();
+        });
 
         function esCamionetaAbastecimiento() {
             const selectedOption = equipoSelect.options[equipoSelect.selectedIndex];
@@ -773,6 +936,17 @@
             e.preventDefault();
 
             const fechaStr = new Date().toLocaleDateString('es-AR');
+            const fechaHoraFirma = new Date().toLocaleString('es-AR', {
+                day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit'
+            });
+
+            const incluirFirma = chkFirmaDigital.checked;
+            const firmanteNombre = firmaNombreInput.value.trim() || 'Responsable de Obra';
+            const firmaId = generarCodigoFirma(firmanteNombre);
+            const textoFirmaLinea = incluirFirma
+                ? `✍️ Firmado electrónicamente por: ${firmanteNombre} | ${fechaHoraFirma} | ID: ${firmaId}`
+                : '';
+
             let tieneDetencion = chkDetencion.checked;
             let detencionMotivo = "-";
             let detencionObservacion = "-";
@@ -811,6 +985,11 @@
                 const [terHs, terMin] = (terminoInput.value || "18:00").split(':');
                 const tiempoCalc = calcularTiempoPersonal();
 
+                const obsFinal = [
+                    tieneDetencion ? detencionObservacion : '',
+                    incluirFirma ? `[Firma Digital: ${firmanteNombre} - ID ${firmaId}]` : ''
+                ].filter(Boolean).join(' ') || '-';
+
                 filasPayload.push({
                     fecha: fechaStr,
                     turno: "-",
@@ -826,7 +1005,8 @@
                     terminoHs: terHs,
                     terminoMin: terMin,
                     tiempoTotal: tiempoCalc.texto,
-                    observaciones: tieneDetencion ? detencionObservacion : "-",
+                    observaciones: obsFinal,
+                    firmaDigital: incluirFirma ? `${firmanteNombre} (${firmaId})` : '-',
                     detencion: tieneDetencion ? 'SI' : 'NO',
                     detencionMotivo: detencionMotivo,
                     detencionObservacion: detencionObservacion
@@ -843,6 +1023,9 @@
                 reporte += `🛠️ Tareas Realizadas:\n${detalleTrabajo}\n`;
                 if (tieneDetencion) {
                     reporte += `⚠️ Novedades: ${detencionMotivo} - ${detencionObservacion}\n`;
+                }
+                if (incluirFirma) {
+                    reporte += `${textoFirmaLinea}\n`;
                 }
                 reporte += `--------------------------------------------------`;
             }
@@ -909,6 +1092,7 @@
                         combustibleCisterna: cisternaLts,
                         repartos: entregasValidas,
                         gasoil: gasoilLts,
+                        firmaDigital: incluirFirma ? `${firmanteNombre} (${firmaId})` : '-',
                         detencion: tieneDetencion ? 'SI' : 'NO',
                         detencionMotivo: detencionMotivo,
                         detencionObservacion: detencionObservacion
@@ -952,6 +1136,7 @@
                         horasTrabajadas: horasTrabajadas,
                         detalleTrabajo: detalleTrabajo,
                         gasoil: gasoilLts,
+                        firmaDigital: incluirFirma ? `${firmanteNombre} (${firmaId})` : '-',
                         detencion: tieneDetencion ? 'SI' : 'NO',
                         detencionMotivo: detencionMotivo,
                         detencionObservacion: detencionObservacion
@@ -969,10 +1154,28 @@
                 reporte += `${detalleTextoReporte}\n`;
                 reporte += `⛽ Gasoil Motor Propio: ${gasoilLts} Lts\n`;
                 reporte += `⚠️ Paradas / Novedades: ${tieneDetencion ? 'SI (' + detencionMotivo + ' - ' + detencionObservacion + ')' : 'NO'}\n`;
+                if (incluirFirma) {
+                    reporte += `${textoFirmaLinea}\n`;
+                }
                 reporte += `--------------------------------------------------`;
             }
 
             reporteTexto.innerText = reporte;
+
+            // Mostrar comprobante visual de firma
+            const reporteFirmaBox = document.getElementById('reporte-firma-box');
+            if (incluirFirma) {
+                const reporteFirmaVisual = document.getElementById('reporte-firma-visual');
+                reporteFirmaVisual.className = `${estiloFirmaActual} text-3xl text-slate-900`;
+                reporteFirmaVisual.textContent = firmanteNombre;
+                document.getElementById('reporte-firma-id').textContent = `ID: ${firmaId}`;
+                document.getElementById('reporte-firma-nombre-sub').textContent = firmanteNombre;
+                document.getElementById('reporte-firma-timestamp').textContent = fechaHoraFirma;
+                reporteFirmaBox.classList.remove('hidden');
+            } else {
+                reporteFirmaBox.classList.add('hidden');
+            }
+
             resultadoContainer.classList.remove('hidden');
 
             if (GOOGLE_SCRIPT_URL && GOOGLE_SCRIPT_URL.includes('script.google.com')) {
@@ -987,7 +1190,7 @@
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify(filasPayload)
                     });
-                    showToast("¡Reporte generado y enviado con éxito!");
+                    showToast("¡Reporte firmado y enviado con éxito!");
                 } catch (err) {
                     showToast("Reporte generado (sin conexión externa)");
                 } finally {
@@ -1015,6 +1218,7 @@
             const fechaStr = new Date().toISOString().split('T')[0];
             let csvContent = "data:text/csv;charset=utf-8,";
             let nombreArchivo = `Parte_Diario_${fechaStr}.csv`;
+            const firmante = chkFirmaDigital.checked ? (firmaNombreInput.value.trim() || "Firmado") : "SinFirma";
 
             if (modoActual === 'PERSONAL') {
                 const rol = personalRolSelect.value || "Personal";
@@ -1023,16 +1227,16 @@
                 const empresa = document.getElementById('personal-empresa').value.trim() || "SSR MINING";
                 const tarea = (document.getElementById('personal-detalle').value.trim() || "-").replace(/"/g, '""');
                 const tiempo = calcularTiempoPersonal().texto;
-                csvContent += "Fecha,Empresa,Rol,Personal,Sector,Empezo,Termino,Tiempo,Tareas\n";
-                csvContent += `"${fechaStr}","${empresa}","${rol}","${nombre}","${sector}","${empezoInput.value}","${terminoInput.value}","${tiempo}","${tarea}"\n`;
+                csvContent += "Fecha,Empresa,Rol,Personal,Sector,Empezo,Termino,Tiempo,Tareas,Firma_Electronica\n";
+                csvContent += `"${fechaStr}","${empresa}","${rol}","${nombre}","${sector}","${empezoInput.value}","${terminoInput.value}","${tiempo}","${tarea}","${firmante}"\n`;
                 nombreArchivo = `Parte_Personal_${fechaStr}_${rol}.csv`;
             } else {
                 const operador = operadorInput.value.trim() || "SinOperador";
                 const equipo = equipoSelect.value || "SinEquipo";
                 const gasoilLts = document.getElementById('gasoil-litros').value || 0;
                 const detalle = (document.getElementById('camioneta-comentarios').value.trim() || document.getElementById('maquinaria-detalle').value.trim() || "-").replace(/"/g, '""');
-                csvContent += "Fecha,Empresa,Operador,Equipo,Detalle,Gasoil_Lts\n";
-                csvContent += `"${fechaStr}","SSR MINING","${operador}","${equipo}","${detalle}",${gasoilLts}\n`;
+                csvContent += "Fecha,Empresa,Operador,Equipo,Detalle,Gasoil_Lts,Firma_Electronica\n";
+                csvContent += `"${fechaStr}","SSR MINING","${operador}","${equipo}","${detalle}",${gasoilLts},"${firmante}"\n`;
                 nombreArchivo = `Parte_Equipo_${fechaStr}_${operador.replace(/\s+/g, '_')}.csv`;
             }
 
@@ -1053,6 +1257,9 @@
             horasTrabajadasInput.value = "0.0";
             tiempoInput.value = "10 hs 00 min";
             personalNombreAuto.value = "";
+            firmaEditadaManualmente = false;
+            chkFirmaDigital.checked = true;
+            panelFirmaDigital.classList.remove('hidden');
             subcategoriaSelect.disabled = true;
             subcategoriaSelect.innerHTML = '<option value="">Primero seleccione categoría...</option>';
             equipoSelect.disabled = true;
@@ -1077,6 +1284,9 @@
                 toast.classList.add('translate-y-20', 'opacity-0');
             }, 3000);
         }
+
+        // Inicializar vista previa de firma al cargar
+        actualizarVistaFirma();
     </script>
 </body>
 </html>
