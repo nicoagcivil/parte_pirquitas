@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Planilla Diaria de Obra - Control de Equipos BSD</title>
+    <title>Planilla Diaria de Obra - Control de Equipos y Personal BSD</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
@@ -38,11 +38,10 @@
 </head>
 <body class="bg-slate-900 text-slate-100 min-h-screen flex flex-col selection:bg-[#b41f25] selection:text-white">
 
-    <!-- Header / Encabezado con Logos Izquierda (logobsd.png) y Derecha (logocliente.png) -->
+    <!-- Header / Encabezado -->
     <header class="bg-slate-800/95 backdrop-blur-md border-b border-slate-700 shadow-lg py-3.5 px-4 sm:px-6 sticky top-0 z-50">
         <div class="max-w-5xl mx-auto flex flex-col gap-3">
             
-            <!-- Fila Superior: Logo BSD (Izquierda) - Título (Centro) - Logo Cliente (Derecha) -->
             <div class="flex items-center justify-between gap-4">
                 <!-- Logo BSD (Izquierda) -->
                 <div class="bg-white px-3 py-1.5 rounded-xl shadow-md shrink-0 flex items-center justify-center border border-slate-200 h-12 sm:h-14 min-w-[96px]">
@@ -58,14 +57,15 @@
                     <h1 class="text-lg sm:text-2xl font-bold tracking-tight text-white">
                         Planilla Diaria de Obra
                     </h1>
-                    <p class="text-xs text-slate-400 hidden sm:block">Control de Equipos, Combustible y Actividades</p>
+                    <p class="text-xs text-slate-400 hidden sm:block">Control de Equipos, Personal, Combustible y Actividades</p>
                 </div>
 
-
-<div class="bg-white px-3 py-1.5 rounded-xl shadow-md shrink-0 flex items-center justify-center border border-slate-200 h-12 sm:h-14 min-w-[90px]">
-    <img src="logocliente.png" alt="Logo Cliente" class="max-h-9 sm:max-h-11 w-auto object-contain" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
-    <span class="hidden text-xs font-extrabold text-slate-700 tracking-wider">CLIENTE</span>
-</div>
+                <!-- Logo Cliente (Derecha) -->
+                <div class="bg-white px-3 py-1.5 rounded-xl shadow-md shrink-0 flex items-center justify-center border border-slate-200 h-12 sm:h-14 min-w-[90px]">
+                    <img src="logocliente.png" alt="Logo Cliente" class="max-h-9 sm:max-h-11 w-auto object-contain" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+                    <span class="hidden text-xs font-extrabold text-slate-700 tracking-wider">CLIENTE</span>
+                </div>
+            </div>
 
             <!-- Fila Inferior: Fecha y Selector de Turno -->
             <div class="flex flex-wrap items-center justify-between gap-3 pt-2 border-t border-slate-700/60">
@@ -89,23 +89,34 @@
         
         <form id="obra-form" class="space-y-6">
             
-            <!-- PUNTO 1: Identificación y Selección Jerárquica de Equipo -->
+            <!-- PUNTO 1: Selector Principal (Máquina/Vehículo vs Personal) -->
             <div class="bg-slate-800 border border-slate-700 rounded-2xl p-5 sm:p-6 shadow-xl relative overflow-hidden">
                 <div class="absolute top-0 left-0 w-1.5 h-full bg-[#b41f25]"></div>
                 <h2 class="text-lg font-semibold text-[#b41f25] flex items-center gap-2 mb-4">
                     <span class="bg-[#b41f25]/10 text-[#b41f25] w-7 h-7 rounded-lg flex items-center justify-center text-sm font-bold border border-[#b41f25]/20">1</span>
-                    Identificación del Chofer / Operador y Equipo
+                    Tipo de Parte Diario (Máquinas o Personal)
                 </h2>
 
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+                <!-- Selector Rápido: Máquina vs Personal -->
+                <div class="grid grid-cols-2 gap-3 mb-5">
+                    <button type="button" id="btn-modo-maquina" class="py-3 px-4 rounded-xl font-bold text-sm border transition-all flex items-center justify-center gap-2 bg-[#b41f25] text-white border-[#b41f25] shadow-lg">
+                        🚜 Máquinas / Camionetas
+                    </button>
+                    <button type="button" id="btn-modo-personal" class="py-3 px-4 rounded-xl font-bold text-sm border transition-all flex items-center justify-center gap-2 bg-slate-900 text-slate-300 border-slate-700 hover:border-slate-500">
+                        👷 Personal de Obra
+                    </button>
+                </div>
+
+                <!-- BLOQUE A: SELECCIÓN DE MÁQUINAS / CAMIONETAS -->
+                <div id="bloque-identificacion-maquina" class="grid grid-cols-1 md:grid-cols-3 gap-5 fade-in">
                     <div class="md:col-span-3">
                         <label class="block text-sm font-medium text-slate-300 mb-1.5">Nombre y Apellido del Chofer / Operador</label>
-                        <input type="text" id="operador-input" placeholder="Ej: Juan Pérez" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-3 text-slate-100 focus:outline-none focus:ring-2 focus:ring-[#b41f25] focus:border-transparent transition-all" required>
+                        <input type="text" id="operador-input" placeholder="Ej: Juan Pérez" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-3 text-slate-100 focus:outline-none focus:ring-2 focus:ring-[#b41f25]">
                     </div>
 
                     <div>
                         <label class="block text-sm font-medium text-slate-300 mb-1.5">1. Categoría</label>
-                        <select id="categoria-select" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-3 text-slate-100 focus:outline-none focus:ring-2 focus:ring-[#b41f25] focus:border-transparent transition-all" required>
+                        <select id="categoria-select" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-3 text-slate-100 focus:outline-none focus:ring-2 focus:ring-[#b41f25]">
                             <option value="">Seleccione categoría...</option>
                             <option value="Livianos">Vehículos Livianos (Camionetas)</option>
                             <option value="Maquinaria">Maquinaria Vial (Cargadora / Retropala)</option>
@@ -114,21 +125,41 @@
 
                     <div>
                         <label class="block text-sm font-medium text-slate-300 mb-1.5">2. Tipo de Equipo</label>
-                        <select id="subcategoria-select" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-3 text-slate-100 focus:outline-none focus:ring-2 focus:ring-[#b41f25] focus:border-transparent transition-all disabled:opacity-40 disabled:cursor-not-allowed" disabled required>
+                        <select id="subcategoria-select" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-3 text-slate-100 focus:outline-none focus:ring-2 focus:ring-[#b41f25] disabled:opacity-40" disabled>
                             <option value="">Primero seleccione categoría...</option>
                         </select>
                     </div>
 
                     <div>
-                        <label class="block text-sm font-medium text-slate-300 mb-1.5">3. Equipo Específico (Dominio / Modelo)</label>
-                        <select id="equipo-select" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-3 text-slate-100 focus:outline-none focus:ring-2 focus:ring-[#b41f25] focus:border-transparent transition-all disabled:opacity-40 disabled:cursor-not-allowed" disabled required>
+                        <label class="block text-sm font-medium text-slate-300 mb-1.5">3. Equipo Específico</label>
+                        <select id="equipo-select" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-3 text-slate-100 focus:outline-none focus:ring-2 focus:ring-[#b41f25] disabled:opacity-40" disabled>
                             <option value="">Primero seleccione tipo...</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- BLOQUE B: SELECCIÓN DE PERSONAL (AYUDANTES / PREVENCIONISTA / SUPERVISOR) -->
+                <div id="bloque-identificacion-personal" class="hidden grid grid-cols-1 md:grid-cols-2 gap-5 fade-in">
+                    <div>
+                        <label class="block text-sm font-medium text-slate-300 mb-1.5">1. Área / Rol del Personal</label>
+                        <select id="personal-rol-select" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-3 text-slate-100 focus:outline-none focus:ring-2 focus:ring-[#b41f25]">
+                            <option value="">Seleccione área / rol...</option>
+                            <option value="Ayudantes">Ayudantes</option>
+                            <option value="Prevencionista">Prevencionista</option>
+                            <option value="Supervisor">Supervisor</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-slate-300 mb-1.5">2. Apellido y Nombre (Selección Automática)</label>
+                        <select id="personal-nombre-select" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-3 text-slate-100 focus:outline-none focus:ring-2 focus:ring-[#b41f25] disabled:opacity-40" disabled>
+                            <option value="">Primero seleccione el rol...</option>
                         </select>
                     </div>
                 </div>
             </div>
 
-            <!-- PUNTO 2: Detalles según Equipo -->
+            <!-- PUNTO 2: Detalles según Equipo o Personal -->
             <div id="sec2-container" class="bg-slate-800 border border-slate-700 rounded-2xl p-5 sm:p-6 shadow-xl relative overflow-hidden transition-all">
                 <div class="absolute top-0 left-0 w-1.5 h-full bg-[#b41f25]"></div>
                 <h2 class="text-lg font-semibold text-[#b41f25] flex items-center gap-2 mb-4">
@@ -139,7 +170,7 @@
                 <div id="sec2-content" class="space-y-4">
                     <!-- Mensaje Inicial -->
                     <div id="panel-inicial" class="bg-slate-900/40 p-6 rounded-xl border border-slate-700/60 text-center text-slate-400 text-sm">
-                        ⚠️ Seleccione un equipo en el Punto 1 para desplegar los campos correspondientes a su reporte.
+                        ⚠️ Seleccione un equipo o persona en el Punto 1 para desplegar los campos correspondientes.
                     </div>
 
                     <!-- Panel Camionetas -->
@@ -173,7 +204,7 @@
                             <input type="text" id="camioneta-comentarios" placeholder="Ej: Transporte de personal, sereno nocturno, recorrida de obra, etc." class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-3 text-slate-100 focus:outline-none focus:ring-2 focus:ring-[#b41f25]">
                         </div>
 
-                        <!-- Sección Exclusiva Camioneta AG022VW: Reparto de Combustible a Equipos -->
+                        <!-- Sección Exclusiva Camioneta AG022VW -->
                         <div id="panel-reparto-combustible" class="hidden pt-4 border-t border-slate-700/70 space-y-3 fade-in">
                             <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
                                 <div>
@@ -190,7 +221,7 @@
                         </div>
                     </div>
 
-                    <!-- Panel Maquinaria (Cargadora Develon SD 300 / Retropala John Deere 310L) -->
+                    <!-- Panel Maquinaria -->
                     <div id="panel-maquinaria" class="sec-panel hidden space-y-4 fade-in">
                         <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
                             <div>
@@ -222,21 +253,59 @@
                         </div>
                         <div>
                             <label class="block text-sm font-medium text-slate-300 mb-1.5">Detalle del Trabajo Realizado</label>
-                            <textarea id="maquinaria-detalle" rows="3" placeholder="Describa las tareas ejecutadas durante el turno (ej: carga de material, nivelación, zanjeo, limpieza de sector...)" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-3 text-slate-100 focus:outline-none focus:ring-2 focus:ring-[#b41f25]"></textarea>
+                            <textarea id="maquinaria-detalle" rows="3" placeholder="Describa las tareas ejecutadas durante el turno..." class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-3 text-slate-100 focus:outline-none focus:ring-2 focus:ring-[#b41f25]"></textarea>
+                        </div>
+                    </div>
+
+                    <!-- Panel Personal (Ayudantes / Prevencionista / Supervisor) -->
+                    <div id="panel-personal" class="sec-panel hidden space-y-4 fade-in">
+                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                            <div>
+                                <label class="block text-sm font-medium text-slate-300 mb-1.5">Sector de Trabajo</label>
+                                <input type="text" id="personal-sector" placeholder="Ej: Frente Norte, Obrador, Planta..." class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-3 text-slate-100 focus:outline-none focus:ring-2 focus:ring-[#b41f25]">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-slate-300 mb-1.5">Empresa</label>
+                                <input type="text" id="personal-empresa" value="BSD" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-3 text-slate-100 focus:outline-none focus:ring-2 focus:ring-[#b41f25]">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-slate-300 mb-1.5">Maq. N° / O.T. N° (Opcional)</label>
+                                <input type="text" id="personal-maq-ot" placeholder="Ej: OT-104 / Apoyo Cargadora" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-3 text-slate-100 focus:outline-none focus:ring-2 focus:ring-[#b41f25]">
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 bg-slate-900/60 p-4 rounded-xl border border-slate-700/70">
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-400 uppercase mb-1.5">Empezó (Hora : Min)</label>
+                                <input type="time" id="personal-empezo" value="08:00" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-2.5 text-slate-100 focus:outline-none focus:ring-2 focus:ring-[#b41f25]">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-400 uppercase mb-1.5">Terminó (Hora : Min)</label>
+                                <input type="time" id="personal-termino" value="18:00" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-2.5 text-slate-100 focus:outline-none focus:ring-2 focus:ring-[#b41f25]">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-400 uppercase mb-1.5">Tiempo Total (Auto)</label>
+                                <input type="text" id="personal-tiempo" readonly value="10 hs 00 min" class="w-full bg-slate-950/70 border border-slate-700 rounded-xl px-4 py-2.5 text-emerald-400 font-bold cursor-not-allowed">
+                            </div>
+                        </div>
+
+                        <div>
+                            <label id="lbl-personal-tarea" class="block text-sm font-medium text-slate-300 mb-1.5">Descripción de Tareas Realizadas</label>
+                            <textarea id="personal-detalle" rows="3" placeholder="Describa detalladamente las tareas realizadas en la jornada..." class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-3 text-slate-100 focus:outline-none focus:ring-2 focus:ring-[#b41f25]"></textarea>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <!-- PUNTO 3: Carga de Gasoil -->
-            <div class="bg-slate-800 border border-slate-700 rounded-2xl p-5 sm:p-6 shadow-xl relative overflow-hidden">
+            <!-- PUNTO 3: Carga de Gasoil (Solo visible en modo Máquinas / Camionetas) -->
+            <div id="sec3-gasoil" class="bg-slate-800 border border-slate-700 rounded-2xl p-5 sm:p-6 shadow-xl relative overflow-hidden">
                 <div class="absolute top-0 left-0 w-1.5 h-full bg-[#b41f25]"></div>
                 <h2 class="text-lg font-semibold text-[#b41f25] flex items-center gap-2 mb-4">
                     <span class="bg-[#b41f25]/10 text-[#b41f25] w-7 h-7 rounded-lg flex items-center justify-center text-sm font-bold border border-[#b41f25]/20">3</span>
                     <span id="lbl-punto3-titulo">Carga de Gasoil</span>
                 </h2>
 
-                <!-- Bloque exclusivo para Camioneta AG022VW (Carga ingresada al tanque/cisterna de abastecimiento) -->
+                <!-- Bloque exclusivo para Camioneta AG022VW -->
                 <div id="container-cisterna-carga" class="hidden mb-4 p-4 bg-slate-900/70 rounded-xl border border-red-500/30 fade-in">
                     <label class="block text-sm font-semibold text-red-400 mb-1.5">🛢️ Carga de Combustible INGRESADA al Tanque de Abastecimiento (AG022VW)</label>
                     <div class="relative">
@@ -264,14 +333,14 @@
             <div class="bg-slate-800 border border-slate-700 rounded-2xl p-5 sm:p-6 shadow-xl relative overflow-hidden">
                 <div class="absolute top-0 left-0 w-1.5 h-full bg-[#b41f25]"></div>
                 <h2 class="text-lg font-semibold text-[#b41f25] flex items-center gap-2 mb-4">
-                    <span class="bg-[#b41f25]/10 text-[#b41f25] w-7 h-7 rounded-lg flex items-center justify-center text-sm font-bold border border-[#b41f25]/20">4</span>
+                    <span id="badge-punto4" class="bg-[#b41f25]/10 text-[#b41f25] w-7 h-7 rounded-lg flex items-center justify-center text-sm font-bold border border-[#b41f25]/20">4</span>
                     Paradas y Novedades
                 </h2>
 
                 <div class="space-y-4">
                     <div class="flex items-center space-x-3 bg-slate-900 p-3.5 rounded-xl border border-slate-700">
                         <input type="checkbox" id="chk-detencion" class="w-5 h-5 text-[#b41f25] rounded bg-slate-950 border-slate-700 focus:ring-[#b41f25] accent-[#b41f25] cursor-pointer">
-                        <label for="chk-detencion" class="text-sm font-medium text-slate-200 cursor-pointer">
+                        <label id="lbl-chk-detencion" for="chk-detencion" class="text-sm font-medium text-slate-200 cursor-pointer">
                             ¿El equipo tuvo paradas, detenciones o novedades hoy?
                         </label>
                     </div>
@@ -279,12 +348,13 @@
                     <div id="panel-detencion" class="hidden bg-slate-900/60 p-4 rounded-xl border border-slate-700/60 space-y-4 fade-in">
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div>
-                                <label class="block text-sm font-medium text-slate-300 mb-1.5">Motivo / Tipo de Parada</label>
+                                <label class="block text-sm font-medium text-slate-300 mb-1.5">Motivo / Tipo de Parada o Novedad</label>
                                 <select id="detencion-tipo" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-2.5 text-slate-100 focus:outline-none focus:ring-2 focus:ring-[#b41f25]">
                                     <option value="Desperfecto Mecánico">Desperfecto Mecánico / Avería</option>
                                     <option value="Stand by Climático">Stand by Climático</option>
                                     <option value="Service / Mantenimiento">Service / Mantenimiento</option>
                                     <option value="Espera / Operativo">Espera / Motivo Operativo</option>
+                                    <option value="Novedad Seguridad / Higiene">Novedad de Seguridad e Higiene</option>
                                     <option value="Otro">Otro (Especificar...)</option>
                                 </select>
                             </div>
@@ -296,8 +366,8 @@
                         </div>
 
                         <div>
-                            <label class="block text-sm font-medium text-slate-300 mb-1.5">Detalle de la Parada / Observaciones</label>
-                            <textarea id="detencion-observacion" rows="3" placeholder="Detalle horario de parada, motivo, estado del equipo o comentarios adicionales..." class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-2.5 text-slate-100 focus:outline-none focus:ring-2 focus:ring-[#b41f25]"></textarea>
+                            <label class="block text-sm font-medium text-slate-300 mb-1.5">Detalle / Observaciones</label>
+                            <textarea id="detencion-observacion" rows="3" placeholder="Detalle horario, motivo o comentarios adicionales..." class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-2.5 text-slate-100 focus:outline-none focus:ring-2 focus:ring-[#b41f25]"></textarea>
                         </div>
                     </div>
                 </div>
@@ -358,7 +428,7 @@
     <script>
         const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwCoT8_fsdnVE21qC3ESSu3ToNd9yzy-I6ZSLjmmYqljUrZdZeeNzF0eHKfQNRrU7Zu/exec';
 
-        // Estructura Jerárquica Definitiva de Equipos
+        // Estructura de Equipos
         const equiposEstructura = {
             "Livianos": {
                 "Camioneta": [
@@ -376,7 +446,24 @@
             }
         };
 
-        // Lista plana de todos los equipos para el selector de entrega de combustible
+        // Estructura de Personal (Nómina exacta)
+        const personalEstructura = {
+            "Ayudantes": [
+                "Flores Villegas Ramon",
+                "Colqui Cristian Elias",
+                "Callata Alan",
+                "Bustamante Cristian",
+                "Vargas Jose Luis",
+                "Colqui Nelson"
+            ],
+            "Prevencionista": [
+                "Veronica Blanco"
+            ],
+            "Supervisor": [
+                "Verda del Valle"
+            ]
+        };
+
         const listaEquiposReceptores = [
             "Cargadora Develon SD 300",
             "Retropala John Deere 310L",
@@ -385,12 +472,28 @@
             "Otro equipo / Auxiliar"
         ];
 
+        // Estado principal: 'MAQUINA' o 'PERSONAL'
+        let modoActual = 'MAQUINA';
+
         // DOM Elements
+        const btnModoMaquina = document.getElementById('btn-modo-maquina');
+        const btnModoPersonal = document.getElementById('btn-modo-personal');
+        const bloqueIdMaquina = document.getElementById('bloque-identificacion-maquina');
+        const bloqueIdPersonal = document.getElementById('bloque-identificacion-personal');
+
         const operadorInput = document.getElementById('operador-input');
         const categoriaSelect = document.getElementById('categoria-select');
         const subcategoriaSelect = document.getElementById('subcategoria-select');
         const equipoSelect = document.getElementById('equipo-select');
+
+        const personalRolSelect = document.getElementById('personal-rol-select');
+        const personalNombreSelect = document.getElementById('personal-nombre-select');
+
         const sec2Titulo = document.getElementById('sec2-titulo');
+        const sec3Gasoil = document.getElementById('sec3-gasoil');
+        const badgePunto4 = document.getElementById('badge-punto4');
+        const lblChkDetencion = document.getElementById('lbl-chk-detencion');
+
         const form = document.getElementById('obra-form');
         const resultadoContainer = document.getElementById('resultado-container');
         const reporteTexto = document.getElementById('reporte-texto');
@@ -422,7 +525,131 @@
             btnDia.className = "px-3.5 py-1.5 rounded-lg text-xs font-semibold text-slate-400 hover:text-slate-200 transition-all";
         });
 
-        // 1. Selección Categoría -> Carga Subcategorías
+        // Cambio entre Modo Máquinas y Modo Personal
+        btnModoMaquina.addEventListener('click', () => cambiarModo('MAQUINA'));
+        btnModoPersonal.addEventListener('click', () => cambiarModo('PERSONAL'));
+
+        function cambiarModo(nuevoModo) {
+            modoActual = nuevoModo;
+            document.querySelectorAll('.sec-panel').forEach(p => p.classList.add('hidden'));
+
+            if (nuevoModo === 'MAQUINA') {
+                btnModoMaquina.className = "py-3 px-4 rounded-xl font-bold text-sm border transition-all flex items-center justify-center gap-2 bg-[#b41f25] text-white border-[#b41f25] shadow-lg";
+                btnModoPersonal.className = "py-3 px-4 rounded-xl font-bold text-sm border transition-all flex items-center justify-center gap-2 bg-slate-900 text-slate-300 border-slate-700 hover:border-slate-500";
+                
+                bloqueIdMaquina.classList.remove('hidden');
+                bloqueIdPersonal.classList.add('hidden');
+                sec3Gasoil.classList.remove('hidden');
+                badgePunto4.textContent = "4";
+                lblChkDetencion.textContent = "¿El equipo tuvo paradas, detenciones o novedades hoy?";
+                configurarPunto2SegunEquipo();
+            } else {
+                btnModoPersonal.className = "py-3 px-4 rounded-xl font-bold text-sm border transition-all flex items-center justify-center gap-2 bg-[#b41f25] text-white border-[#b41f25] shadow-lg";
+                btnModoMaquina.className = "py-3 px-4 rounded-xl font-bold text-sm border transition-all flex items-center justify-center gap-2 bg-slate-900 text-slate-300 border-slate-700 hover:border-slate-500";
+                
+                bloqueIdMaquina.classList.add('hidden');
+                bloqueIdPersonal.classList.remove('hidden');
+                sec3Gasoil.classList.add('hidden');
+                badgePunto4.textContent = "3";
+                lblChkDetencion.textContent = "¿Hubo novedades, observaciones especiales o interrupciones hoy?";
+                configurarPanelPersonal();
+            }
+        }
+
+        // Lógica de Selección de Personal (Relleno Automático de Nombres)
+        personalRolSelect.addEventListener('change', function() {
+            const rol = this.value;
+            personalNombreSelect.innerHTML = '';
+
+            if (rol && personalEstructura[rol]) {
+                personalNombreSelect.disabled = false;
+                const nombres = personalEstructura[rol];
+
+                if (nombres.length === 1) {
+                    // Prevencionista o Supervisor: se selecciona automáticamente el único nombre
+                    const opt = document.createElement('option');
+                    opt.value = nombres[0];
+                    opt.textContent = nombres[0];
+                    personalNombreSelect.appendChild(opt);
+                    personalNombreSelect.value = nombres[0];
+                } else {
+                    // Ayudantes: lista los 6 nombres
+                    const defaultOpt = document.createElement('option');
+                    defaultOpt.value = "";
+                    defaultOpt.textContent = "Seleccione ayudante...";
+                    personalNombreSelect.appendChild(defaultOpt);
+
+                    nombres.forEach(nombre => {
+                        const opt = document.createElement('option');
+                        opt.value = nombre;
+                        opt.textContent = nombre;
+                        personalNombreSelect.appendChild(opt);
+                    });
+                }
+            } else {
+                personalNombreSelect.disabled = true;
+                personalNombreSelect.innerHTML = '<option value="">Primero seleccione el rol...</option>';
+            }
+            configurarPanelPersonal();
+        });
+
+        personalNombreSelect.addEventListener('change', configurarPanelPersonal);
+
+        function configurarPanelPersonal() {
+            const rol = personalRolSelect.value;
+            const nombre = personalNombreSelect.value;
+            const panelInicial = document.getElementById('panel-inicial');
+            const panelPersonal = document.getElementById('panel-personal');
+            const lblTarea = document.getElementById('lbl-personal-tarea');
+
+            if (!rol || !nombre) {
+                panelInicial.classList.remove('hidden');
+                panelPersonal.classList.add('hidden');
+                sec2Titulo.textContent = "Actividad y Detalle de Jornada (Personal)";
+                return;
+            }
+
+            panelInicial.classList.add('hidden');
+            panelPersonal.classList.remove('hidden');
+
+            if (rol === 'Ayudantes') {
+                sec2Titulo.textContent = `Tareas Realizadas - Ayudante (${nombre})`;
+                lblTarea.textContent = "Detalle de Tareas Realizadas (Apoyo, herramientas, frente de obra, etc.)";
+            } else if (rol === 'Prevencionista') {
+                sec2Titulo.textContent = `Parte Diario Prevencionista (${nombre})`;
+                lblTarea.textContent = "Tareas de Seguridad e Higiene (Charlas, inspecciones, permisos, control EPP, etc.)";
+            } else if (rol === 'Supervisor') {
+                sec2Titulo.textContent = `Parte Diario Supervisor (${nombre})`;
+                lblTarea.textContent = "Tareas de Supervisión (Coordinación de frentes, avance de obra, novedades, etc.)";
+            }
+        }
+
+        // Cálculo automático de Tiempo Trabajado (Personal)
+        const empezoInput = document.getElementById('personal-empezo');
+        const terminoInput = document.getElementById('personal-termino');
+        const tiempoInput = document.getElementById('personal-tiempo');
+
+        function calcularTiempoPersonal() {
+            if (!empezoInput.value || !terminoInput.value) {
+                tiempoInput.value = "0 hs 00 min";
+                return { hs: 0, min: 0, texto: "0 hs 00 min" };
+            }
+            const [h1, m1] = empezoInput.value.split(':').map(Number);
+            const [h2, m2] = terminoInput.value.split(':').map(Number);
+            let diffMin = (h2 * 60 + m2) - (h1 * 60 + m1);
+            if (diffMin < 0) diffMin += 24 * 60; // Soporte turno noche que cruza medianoche
+
+            const hs = Math.floor(diffMin / 60);
+            const min = diffMin % 60;
+            const texto = `${hs} hs ${String(min).padStart(2, '0')} min`;
+            tiempoInput.value = texto;
+            return { hs, min, texto };
+        }
+
+        empezoInput.addEventListener('change', calcularTiempoPersonal);
+        terminoInput.addEventListener('change', calcularTiempoPersonal);
+
+        // Lógica de Selección de Máquinas / Camionetas
         categoriaSelect.addEventListener('change', function() {
             const cat = this.value;
             subcategoriaSelect.innerHTML = '<option value="">Seleccione tipo de equipo...</option>';
@@ -443,7 +670,6 @@
             configurarPunto2SegunEquipo();
         });
 
-        // 2. Selección Subcategoría -> Carga Equipos Específicos
         subcategoriaSelect.addEventListener('change', function() {
             const cat = categoriaSelect.value;
             const sub = this.value;
@@ -473,6 +699,8 @@
         }
 
         function configurarPunto2SegunEquipo() {
+            if (modoActual !== 'MAQUINA') return;
+
             const cat = categoriaSelect.value;
             const sub = subcategoriaSelect.value;
             const esAbast = esCamionetaAbastecimiento();
@@ -489,7 +717,6 @@
             panelInicial.classList.add('hidden');
             document.querySelectorAll('.sec-panel').forEach(p => p.classList.add('hidden'));
 
-            // Configurar Punto 3 según si es AG022VW (abastecimiento) o equipo regular
             if (esAbast) {
                 containerCisterna.classList.remove('hidden');
                 lblPunto3.textContent = "Control de Carga Cisterna y Consumo Propio";
@@ -533,7 +760,6 @@
             const lista = document.getElementById('repartos-lista');
             const div = document.createElement('div');
             div.className = "reparto-item grid grid-cols-1 sm:grid-cols-12 gap-3 items-center bg-slate-950/50 p-3.5 rounded-xl border border-slate-800 fade-in";
-            
             const opcionesEq = listaEquiposReceptores.map(eq => `<option value="${eq}">${eq}</option>`).join('');
 
             div.innerHTML = `
@@ -566,7 +792,7 @@
             containerOtro.classList.toggle('hidden', this.value !== "Otro");
         });
 
-        // Cálculo automático de Km Recorridos (Camionetas)
+        // Cálculo automático Km Recorridos
         const kmInicialInput = document.getElementById('camioneta-km-inicial');
         const kmFinalInput = document.getElementById('camioneta-km-final');
         const kmRecorridosInput = document.getElementById('camioneta-km');
@@ -574,33 +800,25 @@
         function calcularKmRecorridos() {
             const ini = parseFloat(kmInicialInput.value);
             const fin = parseFloat(kmFinalInput.value);
-
             if (isNaN(ini) || isNaN(fin)) {
                 kmRecorridosInput.value = "0";
-                kmRecorridosInput.classList.remove('text-red-400');
-                kmRecorridosInput.classList.add('text-emerald-400');
                 return 0;
             }
-
             const diff = fin - ini;
             if (diff < 0) {
                 kmRecorridosInput.value = "0 (Verificar Final < Inicial)";
-                kmRecorridosInput.classList.remove('text-emerald-400');
-                kmRecorridosInput.classList.add('text-red-400');
+                kmRecorridosInput.classList.replace('text-emerald-400', 'text-red-400');
                 return 0;
             }
-
             const resultado = Number.isInteger(diff) ? diff.toString() : diff.toFixed(1);
             kmRecorridosInput.value = resultado;
-            kmRecorridosInput.classList.remove('text-red-400');
-            kmRecorridosInput.classList.add('text-emerald-400');
+            kmRecorridosInput.classList.replace('text-red-400', 'text-emerald-400');
             return parseFloat(resultado);
         }
-
         kmInicialInput.addEventListener('input', calcularKmRecorridos);
         kmFinalInput.addEventListener('input', calcularKmRecorridos);
 
-        // Cálculo automático de Horas Trabajadas (Maquinaria)
+        // Cálculo automático Horas Trabajadas
         const horoInicialInput = document.getElementById('maquinaria-horo-inicial');
         const horoFinalInput = document.getElementById('maquinaria-horo-final');
         const horasTrabajadasInput = document.getElementById('maquinaria-horas-trabajadas');
@@ -608,29 +826,21 @@
         function calcularHorasTrabajadas() {
             const ini = parseFloat(horoInicialInput.value);
             const fin = parseFloat(horoFinalInput.value);
-
             if (isNaN(ini) || isNaN(fin)) {
                 horasTrabajadasInput.value = "0.0";
-                horasTrabajadasInput.classList.remove('text-red-400');
-                horasTrabajadasInput.classList.add('text-emerald-400');
                 return 0;
             }
-
             const diff = fin - ini;
             if (diff < 0) {
                 horasTrabajadasInput.value = "0.0 (Verificar Final < Inicial)";
-                horasTrabajadasInput.classList.remove('text-emerald-400');
-                horasTrabajadasInput.classList.add('text-red-400');
+                horasTrabajadasInput.classList.replace('text-emerald-400', 'text-red-400');
                 return 0;
             }
-
             const resultado = diff.toFixed(1);
             horasTrabajadasInput.value = resultado;
-            horasTrabajadasInput.classList.remove('text-red-400');
-            horasTrabajadasInput.classList.add('text-emerald-400');
+            horasTrabajadasInput.classList.replace('text-red-400', 'text-emerald-400');
             return parseFloat(resultado);
         }
-
         horoInicialInput.addEventListener('input', calcularHorasTrabajadas);
         horoFinalInput.addEventListener('input', calcularHorasTrabajadas);
 
@@ -638,72 +848,129 @@
         form.addEventListener('submit', async function(e) {
             e.preventDefault();
 
-            const operador = operadorInput.value.trim();
-            const categoria = categoriaSelect.value;
-            const subcategoria = subcategoriaSelect.value;
-            const equipo = equipoSelect.value;
-            const esAbast = esCamionetaAbastecimiento();
-
-            if (!operador) {
-                showToast("Por favor, ingrese el nombre del chofer / operador");
-                return;
-            }
-
-            if (!equipo) {
-                showToast("Por favor, seleccione un equipo");
-                return;
-            }
-
             const fechaStr = new Date().toLocaleDateString('es-AR');
-            const gasoilLts = document.getElementById('gasoil-litros').value || 0;
-            const cisternaLts = esAbast ? (document.getElementById('cisterna-litros').value || 0) : 0;
-
             let tieneDetencion = chkDetencion.checked;
             let detencionMotivo = "-";
             let detencionObservacion = "-";
 
             if (tieneDetencion) {
                 let tipo = detencionTipo.value;
-                if (tipo === "Otro") {
-                    detencionMotivo = document.getElementById('detencion-otro-texto').value.trim() || "Otro motivo sin especificar";
-                } else {
-                    detencionMotivo = tipo;
-                }
+                detencionMotivo = (tipo === "Otro")
+                    ? (document.getElementById('detencion-otro-texto').value.trim() || "Otro motivo sin especificar")
+                    : tipo;
                 detencionObservacion = document.getElementById('detencion-observacion').value.trim() || "Sin observaciones adicionales";
             }
 
             let filasPayload = [];
-            let detalleTextoReporte = "";
+            let reporte = "";
 
-            if (subcategoria === "Camioneta" || categoria === "Livianos") {
-                const kmIniVal = kmInicialInput.value !== "" ? parseFloat(kmInicialInput.value) : null;
-                const kmFinVal = kmFinalInput.value !== "" ? parseFloat(kmFinalInput.value) : null;
+            // RAMA 1: ENVÍO DE PERSONAL
+            if (modoActual === 'PERSONAL') {
+                const rolPersonal = personalRolSelect.value;
+                const nombrePersonal = personalNombreSelect.value;
 
-                if (kmIniVal !== null && kmFinVal !== null && kmFinVal < kmIniVal) {
-                    showToast("El Km Final no puede ser menor al Km Inicial");
+                if (!rolPersonal || !nombrePersonal) {
+                    showToast("Por favor, seleccione el área y el nombre del personal");
                     return;
                 }
 
-                const kmInicialStr = kmIniVal !== null ? kmIniVal : 0;
-                const kmFinalStr = kmFinVal !== null ? kmFinVal : 0;
-                const kmRecorridos = calcularKmRecorridos();
-                const comentarios = document.getElementById('camioneta-comentarios').value.trim() || "Sin comentarios";
+                const sector = document.getElementById('personal-sector').value.trim() || "Obra General";
+                const empresa = document.getElementById('personal-empresa').value.trim() || "BSD";
+                const maqOt = document.getElementById('personal-maq-ot').value.trim() || "-";
+                const detalleTrabajo = document.getElementById('personal-detalle').value.trim();
 
-                if (esAbast) {
-                    const repartos = document.querySelectorAll('.reparto-item');
+                if (!detalleTrabajo) {
+                    showToast("Por favor, describa las tareas realizadas");
+                    return;
+                }
+
+                const [empHs, empMin] = (empezoInput.value || "08:00").split(':');
+                const [terHs, terMin] = (terminoInput.value || "18:00").split(':');
+                const tiempoCalc = calcularTiempoPersonal();
+
+                filasPayload.push({
+                    fecha: fechaStr,
+                    turno: turnoSeleccionado,
+                    frente: 'PERSONAL',
+                    rolPersonal: rolPersonal,
+                    operador: nombrePersonal,
+                    sector: sector,
+                    maqOt: maqOt,
+                    detalleTrabajo: detalleTrabajo,
+                    empresa: empresa,
+                    empezoHs: empHs,
+                    empezoMin: empMin,
+                    terminoHs: terHs,
+                    terminoMin: terMin,
+                    tiempoTotal: tiempoCalc.texto,
+                    observaciones: tieneDetencion ? detencionObservacion : "-",
+                    detencion: tieneDetencion ? 'SI' : 'NO',
+                    detencionMotivo: detencionMotivo,
+                    detencionObservacion: detencionObservacion
+                });
+
+                reporte = `📋 PARTE DIARIO INTERNO DE PERSONAL - BSD\n`;
+                reporte += `--------------------------------------------------\n`;
+                reporte += `📅 Fecha: ${fechaStr} | ⏱️ Turno: ${turnoSeleccionado}\n`;
+                reporte += `👷 Rol: ${rolPersonal} | 👤 Nombre: ${nombrePersonal}\n`;
+                reporte += `📍 Sector: ${sector} | 🏢 Empresa: ${empresa}\n`;
+                reporte += `🕒 Horario: ${empezoInput.value} a ${terminoInput.value} (${tiempoCalc.texto})\n`;
+                reporte += `--------------------------------------------------\n`;
+                reporte += `🛠️ Tareas Realizadas:\n${detalleTrabajo}\n`;
+                if (tieneDetencion) {
+                    reporte += `⚠️ Novedades: ${detencionMotivo} - ${detencionObservacion}\n`;
+                }
+                reporte += `--------------------------------------------------`;
+            }
+            // RAMA 2: ENVÍO DE MÁQUINAS / CAMIONETAS
+            else {
+                const operador = operadorInput.value.trim();
+                const categoria = categoriaSelect.value;
+                const subcategoria = subcategoriaSelect.value;
+                const equipo = equipoSelect.value;
+                const esAbast = esCamionetaAbastecimiento();
+
+                if (!operador) {
+                    showToast("Por favor, ingrese el nombre del chofer / operador");
+                    return;
+                }
+                if (!equipo) {
+                    showToast("Por favor, seleccione un equipo");
+                    return;
+                }
+
+                const gasoilLts = document.getElementById('gasoil-litros').value || 0;
+                const cisternaLts = esAbast ? (document.getElementById('cisterna-litros').value || 0) : 0;
+                let detalleTextoReporte = "";
+
+                if (subcategoria === "Camioneta" || categoria === "Livianos") {
+                    const kmIniVal = kmInicialInput.value !== "" ? parseFloat(kmInicialInput.value) : null;
+                    const kmFinVal = kmFinalInput.value !== "" ? parseFloat(kmFinalInput.value) : null;
+
+                    if (kmIniVal !== null && kmFinVal !== null && kmFinVal < kmIniVal) {
+                        showToast("El Km Final no puede ser menor al Km Inicial");
+                        return;
+                    }
+
+                    const kmInicialStr = kmIniVal !== null ? kmIniVal : 0;
+                    const kmFinalStr = kmFinVal !== null ? kmFinVal : 0;
+                    const kmRecorridos = calcularKmRecorridos();
+                    const comentarios = document.getElementById('camioneta-comentarios').value.trim() || "Sin comentarios";
+
                     let entregasValidas = [];
-                    repartos.forEach(r => {
-                        const rec = r.querySelector('.reparto-receptor').value;
-                        const lt = r.querySelector('.reparto-litros').value;
-                        if (rec || (lt && parseFloat(lt) > 0)) {
-                            entregasValidas.push({
-                                receptor: rec || "Equipo sin especificar",
-                                litros: lt || 0
-                            });
-                        }
-                    });
+                    if (esAbast) {
+                        document.querySelectorAll('.reparto-item').forEach(r => {
+                            const rec = r.querySelector('.reparto-receptor').value;
+                            const lt = r.querySelector('.reparto-litros').value;
+                            if (rec || (lt && parseFloat(lt) > 0)) {
+                                entregasValidas.push({
+                                    receptor: rec || "Equipo sin especificar",
+                                    litros: lt || 0
+                                });
+                            }
+                        });
+                    }
 
-                    // Registro unificado para Camionetas + Carga_Gasoil en Google Sheets
                     filasPayload.push({
                         fecha: fechaStr,
                         turno: turnoSeleccionado,
@@ -723,84 +990,63 @@
                         detencionObservacion: detencionObservacion
                     });
 
-                    detalleTextoReporte = `🚗 Kilometraje: Inicial ${kmInicialStr} Km → Final ${kmFinalStr} Km (Recorridos: ${kmRecorridos} Km)\n📝 Actividad / Comentarios: ${comentarios}\n`;
-                    detalleTextoReporte += `🛢️ Ingreso Tanque Abastecimiento: ${cisternaLts} Lts\n`;
-                    if (entregasValidas.length > 0) {
-                        detalleTextoReporte += `⛽ Entregas de Combustible (${entregasValidas.length}):\n`;
-                        entregasValidas.forEach(ent => {
-                            detalleTextoReporte += `   • ${ent.receptor}: ${ent.litros} Lts\n`;
-                        });
-                    } else {
-                        detalleTextoReporte += `⛽ Entregas de Combustible: Sin entregas registradas\n`;
+                    detalleTextoReporte = `🚗 Kilometraje: Inicial ${kmInicialStr} Km → Final ${kmFinalStr} Km (Recorridos: ${kmRecorridos} Km)\n📝 Actividad / Comentarios: ${comentarios}`;
+                    if (esAbast) {
+                        detalleTextoReporte += `\n🛢️ Ingreso Tanque Abastecimiento: ${cisternaLts} Lts`;
+                        if (entregasValidas.length > 0) {
+                            detalleTextoReporte += `\n⛽ Entregas de Combustible (${entregasValidas.length}):`;
+                            entregasValidas.forEach(ent => {
+                                detalleTextoReporte += `\n   • ${ent.receptor}: ${ent.litros} Lts`;
+                            });
+                        }
                     }
-                    detalleTextoReporte = detalleTextoReporte.trimEnd();
                 } else {
+                    const horoIniVal = horoInicialInput.value !== "" ? parseFloat(horoInicialInput.value) : null;
+                    const horoFinVal = horoFinalInput.value !== "" ? parseFloat(horoFinalInput.value) : null;
+
+                    if (horoIniVal !== null && horoFinVal !== null && horoFinVal < horoIniVal) {
+                        showToast("El Horómetro Final no puede ser menor al Horómetro Inicial");
+                        return;
+                    }
+
+                    const horoInicialStr = horoIniVal !== null ? horoIniVal.toFixed(1) : "0.0";
+                    const horoFinalStr = horoFinVal !== null ? horoFinVal.toFixed(1) : "0.0";
+                    const horasTrabajadas = calcularHorasTrabajadas().toFixed(1);
+                    const sectorTrabajo = document.getElementById('maquinaria-sector').value.trim() || "Sin sector especificado";
+                    const detalleTrabajo = document.getElementById('maquinaria-detalle').value.trim() || "Sin detalle especificado";
+
                     filasPayload.push({
                         fecha: fechaStr,
                         turno: turnoSeleccionado,
                         operador: operador,
                         categoria: categoria,
                         equipo: equipo,
-                        frente: 'CAMIONETA',
-                        kmInicial: kmInicialStr,
-                        kmFinal: kmFinalStr,
-                        kmRecorridos: kmRecorridos,
-                        comentarios: comentarios,
+                        frente: subcategoria.toUpperCase(),
+                        sector: sectorTrabajo,
+                        horometroInicial: horoInicialStr,
+                        horometroFinal: horoFinalStr,
+                        horasTrabajadas: horasTrabajadas,
+                        detalleTrabajo: detalleTrabajo,
                         gasoil: gasoilLts,
                         detencion: tieneDetencion ? 'SI' : 'NO',
                         detencionMotivo: detencionMotivo,
                         detencionObservacion: detencionObservacion
                     });
 
-                    detalleTextoReporte = `🚗 Kilometraje: Inicial ${kmInicialStr} Km → Final ${kmFinalStr} Km (Recorridos: ${kmRecorridos} Km)\n📝 Actividad / Comentarios: ${comentarios}`;
-                }
-            } else {
-                const horoIniVal = horoInicialInput.value !== "" ? parseFloat(horoInicialInput.value) : null;
-                const horoFinVal = horoFinalInput.value !== "" ? parseFloat(horoFinalInput.value) : null;
-
-                if (horoIniVal !== null && horoFinVal !== null && horoFinVal < horoIniVal) {
-                    showToast("El Horómetro Final no puede ser menor al Horómetro Inicial");
-                    return;
+                    detalleTextoReporte = `⏱️ Horómetro: Inicial ${horoInicialStr} Hs → Final ${horoFinalStr} Hs (Trabajadas: ${horasTrabajadas} Hs)\n📍 Sector de Trabajo: ${sectorTrabajo}\n🛠️ Detalle del Trabajo: ${detalleTrabajo}`;
                 }
 
-                const horoInicialStr = horoIniVal !== null ? horoIniVal.toFixed(1) : "0.0";
-                const horoFinalStr = horoFinVal !== null ? horoFinVal.toFixed(1) : "0.0";
-                const horasTrabajadas = calcularHorasTrabajadas().toFixed(1);
-                const sectorTrabajo = document.getElementById('maquinaria-sector').value.trim() || "Sin sector especificado";
-                const detalleTrabajo = document.getElementById('maquinaria-detalle').value.trim() || "Sin detalle especificado";
-
-                filasPayload.push({
-                    fecha: fechaStr,
-                    turno: turnoSeleccionado,
-                    operador: operador,
-                    categoria: categoria,
-                    equipo: equipo,
-                    frente: subcategoria.toUpperCase(),
-                    sector: sectorTrabajo,
-                    horometroInicial: horoInicialStr,
-                    horometroFinal: horoFinalStr,
-                    horasTrabajadas: horasTrabajadas,
-                    detalleTrabajo: detalleTrabajo,
-                    gasoil: gasoilLts,
-                    detencion: tieneDetencion ? 'SI' : 'NO',
-                    detencionMotivo: detencionMotivo,
-                    detencionObservacion: detencionObservacion
-                });
-
-                detalleTextoReporte = `⏱️ Horómetro: Inicial ${horoInicialStr} Hs → Final ${horoFinalStr} Hs (Trabajadas: ${horasTrabajadas} Hs)\n📍 Sector de Trabajo: ${sectorTrabajo}\n🛠️ Detalle del Trabajo: ${detalleTrabajo}`;
+                reporte = `📋 PARTE DIARIO DE OBRA - BSD\n`;
+                reporte += `--------------------------------------------------\n`;
+                reporte += `📅 Fecha: ${fechaStr} | ⏱️ Turno: ${turnoSeleccionado}\n`;
+                reporte += `👤 Chofer / Operador: ${operador}\n`;
+                reporte += `🚜 Equipo: ${equipo}\n`;
+                reporte += `--------------------------------------------------\n`;
+                reporte += `${detalleTextoReporte}\n`;
+                reporte += `⛽ Gasoil Motor Propio: ${gasoilLts} Lts\n`;
+                reporte += `⚠️ Paradas / Novedades: ${tieneDetencion ? 'SI (' + detencionMotivo + ' - ' + detencionObservacion + ')' : 'NO'}\n`;
+                reporte += `--------------------------------------------------`;
             }
-
-            // Texto Resumen para Copiar
-            let reporte = `📋 PARTE DIARIO DE OBRA - BSD\n`;
-            reporte += `--------------------------------------------------\n`;
-            reporte += `📅 Fecha: ${fechaStr} | ⏱️ Turno: ${turnoSeleccionado}\n`;
-            reporte += `👤 Chofer / Operador: ${operador}\n`;
-            reporte += `🚜 Equipo: ${equipo}\n`;
-            reporte += `--------------------------------------------------\n`;
-            reporte += `${detalleTextoReporte}\n`;
-            reporte += `⛽ Gasoil Motor Propio: ${gasoilLts} Lts\n`;
-            reporte += `⚠️ Paradas / Novedades: ${tieneDetencion ? 'SI (' + detencionMotivo + ' - ' + detencionObservacion + ')' : 'NO'}\n`;
-            reporte += `--------------------------------------------------`;
 
             reporteTexto.innerText = reporte;
             resultadoContainer.classList.remove('hidden');
@@ -829,11 +1075,10 @@
             resultadoContainer.scrollIntoView({ behavior: 'smooth' });
         });
 
-        // Copiar Reporte al Portapapeles
+        // Copiar Reporte
         document.getElementById('btn-copiar').addEventListener('click', function() {
-            const texto = reporteTexto.innerText;
             const textarea = document.createElement('textarea');
-            textarea.value = texto;
+            textarea.value = reporteTexto.innerText;
             document.body.appendChild(textarea);
             textarea.select();
             document.execCommand('copy');
@@ -844,31 +1089,31 @@
         // Descargar CSV
         document.getElementById('btn-csv').addEventListener('click', function() {
             const fechaStr = new Date().toISOString().split('T')[0];
-            const operador = operadorInput.value.trim() || "SinOperador";
-            const equipo = equipoSelect.value || "SinEquipo";
-            const esCamioneta = subcategoriaSelect.value === "Camioneta" || categoriaSelect.value === "Livianos";
-            const gasoilLts = document.getElementById('gasoil-litros').value || 0;
-            const cisternaLts = esCamionetaAbastecimiento() ? (document.getElementById('cisterna-litros').value || 0) : "-";
-
-            const kmIni = esCamioneta ? (kmInicialInput.value || 0) : "-";
-            const kmFin = esCamioneta ? (kmFinalInput.value || 0) : "-";
-            const kmRec = esCamioneta ? calcularKmRecorridos() : "-";
-
-            const horoIni = !esCamioneta ? (horoInicialInput.value || 0) : "-";
-            const horoFin = !esCamioneta ? (horoFinalInput.value || 0) : "-";
-            const horasTrab = !esCamioneta ? calcularHorasTrabajadas().toFixed(1) : "-";
-
-            const sector = document.getElementById('maquinaria-sector').value.trim() || "-";
-            const detalle = (document.getElementById('camioneta-comentarios').value.trim() || document.getElementById('maquinaria-detalle').value.trim() || "-").replace(/"/g, '""');
-            
             let csvContent = "data:text/csv;charset=utf-8,";
-            csvContent += "Fecha,Turno,Operador,Categoria,Equipo,Km_Inicial,Km_Final,Km_Recorridos,Horometro_Inicial,Horometro_Final,Horas_Trabajadas,Sector,Detalle_Comentarios,Gasoil_Motor_Lts,Ingreso_Cisterna_Lts,Paradas\n";
-            csvContent += `"${fechaStr}","${turnoSeleccionado}","${operador}","${categoriaSelect.value}","${equipo}","${kmIni}","${kmFin}","${kmRec}","${horoIni}","${horoFin}","${horasTrab}","${sector}","${detalle}",${gasoilLts},"${cisternaLts}","${chkDetencion.checked ? 'SI' : 'NO'}"\n`;
+            let nombreArchivo = `Parte_Diario_${fechaStr}.csv`;
 
-            const encodedUri = encodeURI(csvContent);
+            if (modoActual === 'PERSONAL') {
+                const rol = personalRolSelect.value || "Personal";
+                const nombre = personalNombreSelect.value || "SinNombre";
+                const sector = document.getElementById('personal-sector').value.trim() || "-";
+                const tarea = (document.getElementById('personal-detalle').value.trim() || "-").replace(/"/g, '""');
+                const tiempo = calcularTiempoPersonal().texto;
+                csvContent += "Fecha,Turno,Rol,Nombre,Sector,Empezo,Termino,Tiempo,Tareas\n";
+                csvContent += `"${fechaStr}","${turnoSeleccionado}","${rol}","${nombre}","${sector}","${empezoInput.value}","${terminoInput.value}","${tiempo}","${tarea}"\n`;
+                nombreArchivo = `Parte_Personal_${fechaStr}_${nombre.replace(/\s+/g, '_')}.csv`;
+            } else {
+                const operador = operadorInput.value.trim() || "SinOperador";
+                const equipo = equipoSelect.value || "SinEquipo";
+                const gasoilLts = document.getElementById('gasoil-litros').value || 0;
+                const detalle = (document.getElementById('camioneta-comentarios').value.trim() || document.getElementById('maquinaria-detalle').value.trim() || "-").replace(/"/g, '""');
+                csvContent += "Fecha,Turno,Operador,Equipo,Detalle,Gasoil_Lts\n";
+                csvContent += `"${fechaStr}","${turnoSeleccionado}","${operador}","${equipo}","${detalle}",${gasoilLts}\n`;
+                nombreArchivo = `Parte_Equipo_${fechaStr}_${operador.replace(/\s+/g, '_')}.csv`;
+            }
+
             const link = document.createElement("a");
-            link.setAttribute("href", encodedUri);
-            link.setAttribute("download", `Parte_Diario_${fechaStr}_${operador.replace(/\s+/g, '_')}.csv`);
+            link.setAttribute("href", encodeURI(csvContent));
+            link.setAttribute("download", nombreArchivo);
             document.body.appendChild(link);
             link.click();
             document.body.removeChild(link);
@@ -879,26 +1124,21 @@
         document.getElementById('btn-limpiar').addEventListener('click', function() {
             form.reset();
             kmRecorridosInput.value = "0";
-            kmRecorridosInput.classList.remove('text-red-400');
-            kmRecorridosInput.classList.add('text-emerald-400');
             horasTrabajadasInput.value = "0.0";
-            horasTrabajadasInput.classList.remove('text-red-400');
-            horasTrabajadasInput.classList.add('text-emerald-400');
+            tiempoInput.value = "10 hs 00 min";
             subcategoriaSelect.disabled = true;
             subcategoriaSelect.innerHTML = '<option value="">Primero seleccione categoría...</option>';
             equipoSelect.disabled = true;
             equipoSelect.innerHTML = '<option value="">Primero seleccione tipo...</option>';
+            personalNombreSelect.disabled = true;
+            personalNombreSelect.innerHTML = '<option value="">Primero seleccione el rol...</option>';
             document.getElementById('repartos-lista').innerHTML = '';
             document.getElementById('panel-reparto-combustible').classList.add('hidden');
             document.getElementById('container-cisterna-carga').classList.add('hidden');
             panelDetencion.classList.add('hidden');
             containerOtro.classList.add('hidden');
             resultadoContainer.classList.add('hidden');
-            
-            document.querySelectorAll('.sec-panel').forEach(p => p.classList.add('hidden'));
-            document.getElementById('panel-inicial').classList.remove('hidden');
-            sec2Titulo.textContent = "Actividad y Detalle de Jornada";
-            lblPunto3 = document.getElementById('lbl-punto3-titulo').textContent = "Carga de Gasoil";
+            cambiarModo(modoActual);
             showToast("Formulario reajustado");
         });
 
