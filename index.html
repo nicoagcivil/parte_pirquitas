@@ -272,8 +272,8 @@
                                 <input type="time" id="personal-termino" value="18:00" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-2.5 text-slate-100 focus:outline-none focus:ring-2 focus:ring-[#b41f25]">
                             </div>
                             <div>
-                                <label class="block text-xs font-semibold text-slate-400 uppercase mb-1.5">Tiempo Total (Auto)</label>
-                                <input type="text" id="personal-tiempo" readonly value="10 hs 00 min" class="w-full bg-slate-950/70 border border-slate-700 rounded-xl px-4 py-2.5 text-emerald-400 font-bold cursor-not-allowed">
+                                <label class="block text-xs font-semibold text-slate-400 uppercase mb-1.5">Tiempo Total (-1h Almuerzo)</label>
+                                <input type="text" id="personal-tiempo" readonly value="9 hs 00 min" class="w-full bg-slate-950/70 border border-slate-700 rounded-xl px-4 py-2.5 text-emerald-400 font-bold cursor-not-allowed">
                             </div>
                         </div>
 
@@ -706,7 +706,7 @@
             }
         }
 
-        // Cálculo automático de Tiempo Trabajado (Personal)
+        // Cálculo automático de Tiempo Trabajado (Personal) descontando 1 hora de almuerzo
         const empezoInput = document.getElementById('personal-empezo');
         const terminoInput = document.getElementById('personal-termino');
         const tiempoInput = document.getElementById('personal-tiempo');
@@ -720,6 +720,13 @@
             const [h2, m2] = terminoInput.value.split(':').map(Number);
             let diffMin = (h2 * 60 + m2) - (h1 * 60 + m1);
             if (diffMin < 0) diffMin += 24 * 60;
+
+            // Descontar 1 hora (60 min) de almuerzo si la jornada supera 1 hora
+            if (diffMin > 60) {
+                diffMin -= 60;
+            } else {
+                diffMin = 0;
+            }
 
             const hs = Math.floor(diffMin / 60);
             const min = diffMin % 60;
@@ -1018,7 +1025,7 @@
                 reporte += `👷 Área: ${rolPersonal}\n`;
                 reporte += `👤 Personal: ${nombrePersonal}\n`;
                 reporte += `📍 Sector: ${sector} | 🏢 Empresa: ${empresa}\n`;
-                reporte += `🕒 Horario: ${empezoInput.value} a ${terminoInput.value} (${tiempoCalc.texto})\n`;
+                reporte += `🕒 Horario: ${empezoInput.value} a ${terminoInput.value} (${tiempoCalc.texto} netos - 1h almuerzo)\n`;
                 reporte += `--------------------------------------------------\n`;
                 reporte += `🛠️ Tareas Realizadas:\n${detalleTrabajo}\n`;
                 if (tieneDetencion) {
@@ -1227,7 +1234,7 @@
                 const empresa = document.getElementById('personal-empresa').value.trim() || "SSR MINING";
                 const tarea = (document.getElementById('personal-detalle').value.trim() || "-").replace(/"/g, '""');
                 const tiempo = calcularTiempoPersonal().texto;
-                csvContent += "Fecha,Empresa,Rol,Personal,Sector,Empezo,Termino,Tiempo,Tareas,Firma_Electronica\n";
+                csvContent += "Fecha,Empresa,Rol,Personal,Sector,Empezo,Termino,Tiempo_Neto,Tareas,Firma_Electronica\n";
                 csvContent += `"${fechaStr}","${empresa}","${rol}","${nombre}","${sector}","${empezoInput.value}","${terminoInput.value}","${tiempo}","${tarea}","${firmante}"\n`;
                 nombreArchivo = `Parte_Personal_${fechaStr}_${rol}.csv`;
             } else {
@@ -1255,7 +1262,7 @@
             document.getElementById('personal-empresa').value = "SSR MINING";
             kmRecorridosInput.value = "0";
             horasTrabajadasInput.value = "0.0";
-            tiempoInput.value = "10 hs 00 min";
+            tiempoInput.value = "9 hs 00 min";
             personalNombreAuto.value = "";
             firmaEditadaManualmente = false;
             chkFirmaDigital.checked = true;
