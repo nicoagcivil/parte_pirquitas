@@ -138,23 +138,21 @@
                     </div>
                 </div>
 
-                <!-- BLOQUE B: SELECCIÓN DE PERSONAL (AYUDANTES / PREVENCIONISTA / SUPERVISOR) -->
-                <div id="bloque-identificacion-personal" class="hidden grid grid-cols-1 md:grid-cols-2 gap-5 fade-in">
-                    <div>
+                <!-- BLOQUE B: SELECCIÓN DE PERSONAL (RELLENO AUTOMÁTICO SIN DESPLEGABLE DE NOMBRES) -->
+                <div id="bloque-identificacion-personal" class="hidden grid grid-cols-1 md:grid-cols-12 gap-5 fade-in">
+                    <div class="md:col-span-4">
                         <label class="block text-sm font-medium text-slate-300 mb-1.5">1. Área / Rol del Personal</label>
                         <select id="personal-rol-select" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-3 text-slate-100 focus:outline-none focus:ring-2 focus:ring-[#b41f25]">
                             <option value="">Seleccione área / rol...</option>
-                            <option value="Ayudantes">Ayudantes</option>
+                            <option value="Ayudantes">Ayudantes (Grupo completo)</option>
                             <option value="Prevencionista">Prevencionista</option>
                             <option value="Supervisor">Supervisor</option>
                         </select>
                     </div>
 
-                    <div>
-                        <label class="block text-sm font-medium text-slate-300 mb-1.5">2. Apellido y Nombre (Selección Automática)</label>
-                        <select id="personal-nombre-select" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-3 text-slate-100 focus:outline-none focus:ring-2 focus:ring-[#b41f25] disabled:opacity-40" disabled>
-                            <option value="">Primero seleccione el rol...</option>
-                        </select>
+                    <div class="md:col-span-8">
+                        <label class="block text-sm font-medium text-slate-300 mb-1.5">2. Personal Asignado (Relleno Automático)</label>
+                        <input type="text" id="personal-nombre-auto" readonly placeholder="Seleccione primero el área / rol..." class="w-full bg-slate-950/70 border border-slate-700 rounded-xl px-4 py-3 text-emerald-400 font-semibold cursor-not-allowed">
                     </div>
                 </div>
             </div>
@@ -170,7 +168,7 @@
                 <div id="sec2-content" class="space-y-4">
                     <!-- Mensaje Inicial -->
                     <div id="panel-inicial" class="bg-slate-900/40 p-6 rounded-xl border border-slate-700/60 text-center text-slate-400 text-sm">
-                        ⚠️ Seleccione un equipo o persona en el Punto 1 para desplegar los campos correspondientes.
+                        ⚠️ Seleccione un equipo o rol de personal en el Punto 1 para desplegar los campos correspondientes.
                     </div>
 
                     <!-- Panel Camionetas -->
@@ -259,7 +257,7 @@
 
                     <!-- Panel Personal (Ayudantes / Prevencionista / Supervisor) -->
                     <div id="panel-personal" class="sec-panel hidden space-y-4 fade-in">
-                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                             <div>
                                 <label class="block text-sm font-medium text-slate-300 mb-1.5">Sector de Trabajo</label>
                                 <input type="text" id="personal-sector" placeholder="Ej: Frente Norte, Obrador, Planta..." class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-3 text-slate-100 focus:outline-none focus:ring-2 focus:ring-[#b41f25]">
@@ -267,10 +265,6 @@
                             <div>
                                 <label class="block text-sm font-medium text-slate-300 mb-1.5">Empresa</label>
                                 <input type="text" id="personal-empresa" value="BSD" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-3 text-slate-100 focus:outline-none focus:ring-2 focus:ring-[#b41f25]">
-                            </div>
-                            <div>
-                                <label class="block text-sm font-medium text-slate-300 mb-1.5">Maq. N° / O.T. N° (Opcional)</label>
-                                <input type="text" id="personal-maq-ot" placeholder="Ej: OT-104 / Apoyo Cargadora" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-3 text-slate-100 focus:outline-none focus:ring-2 focus:ring-[#b41f25]">
                             </div>
                         </div>
 
@@ -446,22 +440,11 @@
             }
         };
 
-        // Estructura de Personal (Nómina exacta)
-        const personalEstructura = {
-            "Ayudantes": [
-                "Flores Villegas Ramon",
-                "Colqui Cristian Elias",
-                "Callata Alan",
-                "Bustamante Cristian",
-                "Vargas Jose Luis",
-                "Colqui Nelson"
-            ],
-            "Prevencionista": [
-                "Veronica Blanco"
-            ],
-            "Supervisor": [
-                "Vera del Valle"
-            ]
+        // Relleno automático de Personal según el rol elegido
+        const personalAsignado = {
+            "Ayudantes": "Flores Villegas Ramon, Colqui Cristian Elias, Callata Alan, Bustamante Cristian, Vargas Jose Luis, Colqui Nelson",
+            "Prevencionista": "Veronica Blanco",
+            "Supervisor": "Verda del Valle"
         };
 
         const listaEquiposReceptores = [
@@ -472,7 +455,6 @@
             "Otro equipo / Auxiliar"
         ];
 
-        // Estado principal: 'MAQUINA' o 'PERSONAL'
         let modoActual = 'MAQUINA';
 
         // DOM Elements
@@ -487,7 +469,7 @@
         const equipoSelect = document.getElementById('equipo-select');
 
         const personalRolSelect = document.getElementById('personal-rol-select');
-        const personalNombreSelect = document.getElementById('personal-nombre-select');
+        const personalNombreAuto = document.getElementById('personal-nombre-auto');
 
         const sec2Titulo = document.getElementById('sec2-titulo');
         const sec3Gasoil = document.getElementById('sec3-gasoil');
@@ -556,48 +538,16 @@
             }
         }
 
-        // Lógica de Selección de Personal (Relleno Automático de Nombres)
+        // Relleno automático de nombres al elegir el rol de Personal
         personalRolSelect.addEventListener('change', function() {
             const rol = this.value;
-            personalNombreSelect.innerHTML = '';
-
-            if (rol && personalEstructura[rol]) {
-                personalNombreSelect.disabled = false;
-                const nombres = personalEstructura[rol];
-
-                if (nombres.length === 1) {
-                    // Prevencionista o Supervisor: se selecciona automáticamente el único nombre
-                    const opt = document.createElement('option');
-                    opt.value = nombres[0];
-                    opt.textContent = nombres[0];
-                    personalNombreSelect.appendChild(opt);
-                    personalNombreSelect.value = nombres[0];
-                } else {
-                    // Ayudantes: lista los 6 nombres
-                    const defaultOpt = document.createElement('option');
-                    defaultOpt.value = "";
-                    defaultOpt.textContent = "Seleccione ayudante...";
-                    personalNombreSelect.appendChild(defaultOpt);
-
-                    nombres.forEach(nombre => {
-                        const opt = document.createElement('option');
-                        opt.value = nombre;
-                        opt.textContent = nombre;
-                        personalNombreSelect.appendChild(opt);
-                    });
-                }
-            } else {
-                personalNombreSelect.disabled = true;
-                personalNombreSelect.innerHTML = '<option value="">Primero seleccione el rol...</option>';
-            }
+            personalNombreAuto.value = personalAsignado[rol] || "";
             configurarPanelPersonal();
         });
 
-        personalNombreSelect.addEventListener('change', configurarPanelPersonal);
-
         function configurarPanelPersonal() {
             const rol = personalRolSelect.value;
-            const nombre = personalNombreSelect.value;
+            const nombre = personalNombreAuto.value;
             const panelInicial = document.getElementById('panel-inicial');
             const panelPersonal = document.getElementById('panel-personal');
             const lblTarea = document.getElementById('lbl-personal-tarea');
@@ -613,8 +563,8 @@
             panelPersonal.classList.remove('hidden');
 
             if (rol === 'Ayudantes') {
-                sec2Titulo.textContent = `Tareas Realizadas - Ayudante (${nombre})`;
-                lblTarea.textContent = "Detalle de Tareas Realizadas (Apoyo, herramientas, frente de obra, etc.)";
+                sec2Titulo.textContent = "Tareas Realizadas - Ayudantes";
+                lblTarea.textContent = "Detalle de Tareas Realizadas por los Ayudantes";
             } else if (rol === 'Prevencionista') {
                 sec2Titulo.textContent = `Parte Diario Prevencionista (${nombre})`;
                 lblTarea.textContent = "Tareas de Seguridad e Higiene (Charlas, inspecciones, permisos, control EPP, etc.)";
@@ -637,7 +587,7 @@
             const [h1, m1] = empezoInput.value.split(':').map(Number);
             const [h2, m2] = terminoInput.value.split(':').map(Number);
             let diffMin = (h2 * 60 + m2) - (h1 * 60 + m1);
-            if (diffMin < 0) diffMin += 24 * 60; // Soporte turno noche que cruza medianoche
+            if (diffMin < 0) diffMin += 24 * 60;
 
             const hs = Math.floor(diffMin / 60);
             const min = diffMin % 60;
@@ -867,16 +817,15 @@
             // RAMA 1: ENVÍO DE PERSONAL
             if (modoActual === 'PERSONAL') {
                 const rolPersonal = personalRolSelect.value;
-                const nombrePersonal = personalNombreSelect.value;
+                const nombrePersonal = personalNombreAuto.value;
 
                 if (!rolPersonal || !nombrePersonal) {
-                    showToast("Por favor, seleccione el área y el nombre del personal");
+                    showToast("Por favor, seleccione el área / rol del personal");
                     return;
                 }
 
                 const sector = document.getElementById('personal-sector').value.trim() || "Obra General";
                 const empresa = document.getElementById('personal-empresa').value.trim() || "BSD";
-                const maqOt = document.getElementById('personal-maq-ot').value.trim() || "-";
                 const detalleTrabajo = document.getElementById('personal-detalle').value.trim();
 
                 if (!detalleTrabajo) {
@@ -895,7 +844,7 @@
                     rolPersonal: rolPersonal,
                     operador: nombrePersonal,
                     sector: sector,
-                    maqOt: maqOt,
+                    maqOt: '-',
                     detalleTrabajo: detalleTrabajo,
                     empresa: empresa,
                     empezoHs: empHs,
@@ -912,7 +861,8 @@
                 reporte = `📋 PARTE DIARIO INTERNO DE PERSONAL - BSD\n`;
                 reporte += `--------------------------------------------------\n`;
                 reporte += `📅 Fecha: ${fechaStr} | ⏱️ Turno: ${turnoSeleccionado}\n`;
-                reporte += `👷 Rol: ${rolPersonal} | 👤 Nombre: ${nombrePersonal}\n`;
+                reporte += `👷 Área: ${rolPersonal}\n`;
+                reporte += `👤 Personal: ${nombrePersonal}\n`;
                 reporte += `📍 Sector: ${sector} | 🏢 Empresa: ${empresa}\n`;
                 reporte += `🕒 Horario: ${empezoInput.value} a ${terminoInput.value} (${tiempoCalc.texto})\n`;
                 reporte += `--------------------------------------------------\n`;
@@ -1094,13 +1044,13 @@
 
             if (modoActual === 'PERSONAL') {
                 const rol = personalRolSelect.value || "Personal";
-                const nombre = personalNombreSelect.value || "SinNombre";
+                const nombre = personalNombreAuto.value || "SinNombre";
                 const sector = document.getElementById('personal-sector').value.trim() || "-";
                 const tarea = (document.getElementById('personal-detalle').value.trim() || "-").replace(/"/g, '""');
                 const tiempo = calcularTiempoPersonal().texto;
-                csvContent += "Fecha,Turno,Rol,Nombre,Sector,Empezo,Termino,Tiempo,Tareas\n";
+                csvContent += "Fecha,Turno,Rol,Personal,Sector,Empezo,Termino,Tiempo,Tareas\n";
                 csvContent += `"${fechaStr}","${turnoSeleccionado}","${rol}","${nombre}","${sector}","${empezoInput.value}","${terminoInput.value}","${tiempo}","${tarea}"\n`;
-                nombreArchivo = `Parte_Personal_${fechaStr}_${nombre.replace(/\s+/g, '_')}.csv`;
+                nombreArchivo = `Parte_Personal_${fechaStr}_${rol}.csv`;
             } else {
                 const operador = operadorInput.value.trim() || "SinOperador";
                 const equipo = equipoSelect.value || "SinEquipo";
@@ -1126,12 +1076,11 @@
             kmRecorridosInput.value = "0";
             horasTrabajadasInput.value = "0.0";
             tiempoInput.value = "10 hs 00 min";
+            personalNombreAuto.value = "";
             subcategoriaSelect.disabled = true;
             subcategoriaSelect.innerHTML = '<option value="">Primero seleccione categoría...</option>';
             equipoSelect.disabled = true;
             equipoSelect.innerHTML = '<option value="">Primero seleccione tipo...</option>';
-            personalNombreSelect.disabled = true;
-            personalNombreSelect.innerHTML = '<option value="">Primero seleccione el rol...</option>';
             document.getElementById('repartos-lista').innerHTML = '';
             document.getElementById('panel-reparto-combustible').classList.add('hidden');
             document.getElementById('container-cisterna-carga').classList.add('hidden');
